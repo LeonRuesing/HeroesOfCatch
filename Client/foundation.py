@@ -22,11 +22,11 @@ from networking import ServerConnection
 
 
 class ProjectGlobals:
-    SCREEN_RECT = pygame.rect.Rect(0, 0, 600, 600)
+    SCREEN_RECT = pygame.rect.Rect(0, 0, 800, 800)
     FPS = 60
 
     IP = "localhost"
-    PORT = 56002
+    PORT = 56021
 
     SERVER_CONNECTION = ServerConnection(IP, PORT)
 
@@ -95,6 +95,7 @@ class LoadingScreen:
         self.headline_font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
         self.background = ProjectGlobals.load_image("lobby_background")
+        self.error_icon = ProjectGlobals.load_image("error_icon")
         self.stateTextBackground = ProjectGlobals.load_image("lobby_state_text_background")
         self.stateTextBackground = pygame.transform.scale(self.stateTextBackground, (500, 100))
 
@@ -110,7 +111,7 @@ class LoadingScreen:
 
         self.reconnect_button = Button("button_reconnect", text="Neu verbinden")
         self.reconnect_button.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-        self.reconnect_button.rect.centery = ProjectGlobals.SCREEN_RECT.centery + 75
+        self.reconnect_button.rect.centery = ProjectGlobals.SCREEN_RECT.centery + 100
 
         # mains.Main.game.button_handler.button_list.append(self.button)
         # mains.Main.game.button_list.append(self.reconnect_button)
@@ -124,7 +125,7 @@ class LoadingScreen:
         print(f"Connected {connected}, Error: {error}")
 
         if not connected:
-            self.set_to_error("Der Verbindungsaufbau zum Server schlug fehl!")
+            self.set_to_error("Der Verbindungsaufbau zum Server ist fehlgeschlagen")
         pass
 
     def set_to_default(self):
@@ -139,52 +140,39 @@ class LoadingScreen:
         pass
 
     def draw(self, screen: pygame.Surface):
-        # screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
-
-        screen.fill(color=(0, 0, 0), rect=ProjectGlobals.SCREEN_RECT)
+        screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
 
         if not self.error_active:
-            text = "Stelle Verbindung mit Server her"
-            basic_surface = self.font.render(text + ' ...', True, (255, 255, 255))
-            headline_surface = self.font.render(text, True,
-                                                (255, 255, 255))
+            text = "Stelle Verbindung mit Server her..."
+            basic_surface = self.font.render(text, True, (255, 255, 255))
+            #headline_surface = self.font.render(text, True,
+                                               # (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
             text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
             text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 100
 
-            screen.blit(headline_surface, text_rect)
+            screen.blit(basic_surface, text_rect)
 
             self.loading_cirlce.draw(screen)
         else:
-            rect = self.stateTextBackground.get_rect()
-            rect.center = ProjectGlobals.SCREEN_RECT.center
-            # screen.blit(self.stateTextBackground, rect)
+            error_icon_rect = self.error_icon.get_rect()
+            error_icon_rect.center = ProjectGlobals.SCREEN_RECT.center
 
-            # Headline
-            text = "Etwas ist schiefgelaufen!"
+            screen.blit(self.error_icon, error_icon_rect)
 
-            basic_surface = self.headline_font.render(text, True, (200, 0, 0))
-
-            text_rect = basic_surface.get_rect()
-            text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery - 10
-
-            screen.blit(basic_surface, text_rect)
-
-            # Error text
             text = self.error_message
             basic_surface = self.font.render(text, True, (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
             text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 10
+            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 50
 
             screen.blit(basic_surface, text_rect)
 
             self.reconnect_button.draw(screen)
 
-        self.button.draw(screen)
+        #self.button.draw(screen)
 
 
 class Game:
@@ -225,6 +213,7 @@ class Game:
                 pass
             elif event.type == pygame.MOUSEBUTTONUP:
                 # self.button_handler.update_button_click()
+                self.connecting.set_to_default()
                 pass
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
