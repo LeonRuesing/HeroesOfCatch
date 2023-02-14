@@ -15,10 +15,12 @@ class ClientConnection:
     def listen_for_pakets(self):
         try:
             while True:
-                paket_id = self.socket.recv(1024).decode()
+                paket_id = int(self.socket.recv(1024).decode())
+
                 print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
         # Catch every exception
-        except Exception:
+        except Exception as e:
+            print(e.__cause__)
             self.disconnect_listener.on_disconnect(self)
             self.socket.close()
             return

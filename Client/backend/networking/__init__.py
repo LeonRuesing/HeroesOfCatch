@@ -1,5 +1,7 @@
 import socket
 
+from backend.shared import PacketListener
+
 
 class ServerConnection:
     def __init__(self, ip, port):
@@ -9,7 +11,7 @@ class ServerConnection:
         self.connected = False
         self.error = False
         self.state = ""
-        # self.paket_listeners: list[foundation.PacketListener] = []
+        self.packet_listeners: list[PacketListener] = []
 
     def connect(self):
         try:
@@ -29,9 +31,8 @@ class ServerConnection:
             return False, str(msg)
 
     def trigger_packet_listener(self, packet_id: int):
-        # for i in self.paket_listeners:
-        #    i.on_paket_reveived(packet_id=packet_id)
-        pass
+        for i in self.paket_listeners:
+            i.on_paket_reveived(packet_id=packet_id)
 
     def listen(self):
         while True:

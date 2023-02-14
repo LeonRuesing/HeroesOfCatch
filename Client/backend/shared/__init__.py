@@ -1,12 +1,10 @@
-import pygame
-import os
-
-import backend.networking
-
-
 class PacketListener:
     def on_paket_reveived(self, packet_id: int):
         pass
+
+
+import pygame
+import os
 
 
 class ProjectGlobals:
@@ -23,4 +21,10 @@ class ProjectGlobals:
 
 
 class HandlerGlobals:
+    import backend.networking
     SERVER_CONNECTION = backend.networking.ServerConnection(ProjectGlobals.IP, ProjectGlobals.PORT)
+
+
+class ControllerGlobals:
+    import backend.controller
+    LOADING_SCREEN_CONTROLLER = backend.controller.LoadingScreenController()

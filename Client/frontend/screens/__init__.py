@@ -1,5 +1,5 @@
 import threading
-from backend.shared import ProjectGlobals
+from backend.shared import ProjectGlobals, ControllerGlobals
 from backend.shared import HandlerGlobals
 from foundation import pygame
 
@@ -76,26 +76,8 @@ class LoadingScreen:
         self.set_to_default()
         # self.set_to_error("Server konnte nicht erreicht werden!")
 
-    def connect(self):
-        try:
-            connected, error = HandlerGlobals.SERVER_CONNECTION.connect()
-
-            if not connected:
-                return
-
-            threading.Thread(target=HandlerGlobals.SERVER_CONNECTION.listen).start()
-        except:
-            #self.set_to_error("Bei der Verbindung zum Server ist ein Problem aufgetreten")
-            print('connection error')
-
-    # Override
-    def on_paket_reveived(self, packet_id: int):
-        if packet_id == 0:
-            HandlerGlobals.SERVER_CONNECTION.state = "Kommunikation mit Server erfolgreich, Anmelden..."
-            pass
-
     def set_to_default(self):
-        threading.Thread(target=self.connect).start()
+        threading.Thread(target=ControllerGlobals.LOADING_SCREEN_CONTROLLER.connect).start()
 
     def update(self):
         pass
@@ -138,6 +120,7 @@ class LoadingScreen:
             text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 70
 
             screen.blit(basic_surface, text_rect)
+
 
 class LobbyScreen:
     def __init__(self):
