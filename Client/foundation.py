@@ -21,8 +21,13 @@ import pygame
 from networking import ServerConnection
 
 
+class PacketListener:
+    def on_paket_reveived(self, packet_id: int):
+        pass
+
+
 class ProjectGlobals:
-    SCREEN_RECT = pygame.rect.Rect(0, 0, 800, 800)
+    SCREEN_RECT = pygame.rect.Rect(0, 0, 600, 600)
     FPS = 60
 
     IP = "localhost"
@@ -43,7 +48,8 @@ class Button:
         self.button_id = image_name
         self.orginal_image = pygame.image.load(image_name + ".png")
         self.rect = self.orginal_image.get_rect()
-        self.hovered_image = pygame.transform.scale(pygame.image.load("button_hover.png").convert_alpha(), self.rect.size)
+        self.hovered_image = pygame.transform.scale(pygame.image.load("button_hover.png").convert_alpha(),
+                                                    self.rect.size)
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
         self.text = text
         self.color = (255, 255, 255)
@@ -87,20 +93,22 @@ class LoadingCircle:
 import threading
 
 
-
-class LoadingScreen:
+class LoadingScreen(PacketListener):
     def __init__(self):
         self.small_font = pygame.font.Font(pygame.font.get_default_font(), 8)
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
         self.headline_font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
-        self.background = ProjectGlobals.load_image("lobby_background")
+        self.background = pygame.transform.scale(ProjectGlobals.load_image("lobby_background"),
+                                                 ProjectGlobals.SCREEN_RECT.size)
         self.error_icon = ProjectGlobals.load_image("error_icon")
         self.stateTextBackground = ProjectGlobals.load_image("lobby_state_text_background")
         self.stateTextBackground = pygame.transform.scale(self.stateTextBackground, (500, 100))
 
         self.error_active = False
         self.error_message = None
+
+        self.loading_state = ""
 
         self.loading_cirlce = LoadingCircle()
         self.loading_cirlce.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
@@ -119,22 +127,29 @@ class LoadingScreen:
         self.set_to_default()
         # self.set_to_error("Server konnte nicht erreicht werden!")
 
+        ProjectGlobals.SERVER_CONNECTION.paket_listeners.append(self)
+
     def connect(self):
-        connected, error = ProjectGlobals.SERVER_CONNECTION.connect()
+        try:
+            self.loading_state = "Stelle Verbindung mit Server her"
+            connected, error = ProjectGlobals.SERVER_CONNECTION.connect()
 
-        print(f"Connected {connected}, Error: {error}")
+            if not connected:
+                return
 
-        if not connected:
-            self.set_to_error("Der Verbindungsaufbau zum Server ist fehlgeschlagen")
-        pass
+            self.loading_state = "Verbunden, warte auf Austausch"
+            threading.Thread(target=ProjectGlobals.SERVER_CONNECTION.listen).start()
+        except:
+            self.set_to_error("Bei der Verbindung zum Server ist ein Problem aufgetreten")
+
+    # Override
+    def on_paket_reveived(self, packet_id: int):
+        if packet_id == 0:
+            ProjectGlobals.SERVER_CONNECTION.state = "Kommunikation mit Server erfolgreich, Anmelden..."
+            pass
 
     def set_to_default(self):
-        self.error_active = False
         threading.Thread(target=self.connect).start()
-
-    def set_to_error(self, error: str):
-        self.error_message = error
-        self.error_active = True
 
     def update(self):
         pass
@@ -142,11 +157,10 @@ class LoadingScreen:
     def draw(self, screen: pygame.Surface):
         screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
 
-        if not self.error_active:
-            text = "Stelle Verbindung mit Server her..."
-            basic_surface = self.font.render(text, True, (255, 255, 255))
-            #headline_surface = self.font.render(text, True,
-                                               # (255, 255, 255))
+        if not ProjectGlobals.SERVER_CONNECTION.error:
+            basic_surface = self.font.render(ProjectGlobals.SERVER_CONNECTION.state, True, (255, 255, 255))
+            # headline_surface = self.font.render(text, True,
+            # (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
             text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
@@ -161,7 +175,7 @@ class LoadingScreen:
 
             screen.blit(self.error_icon, error_icon_rect)
 
-            text = self.error_message
+            text = ProjectGlobals.SERVER_CONNECTION.state
             basic_surface = self.font.render(text, True, (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
@@ -170,9 +184,29 @@ class LoadingScreen:
 
             screen.blit(basic_surface, text_rect)
 
-            self.reconnect_button.draw(screen)
+            text = "Klicken Sie auf den Bildschirm, um neu zu verbinden!"
+            basic_surface = self.font.render(text, True, (255, 255, 255))
 
-        #self.button.draw(screen)
+            text_rect = basic_surface.get_rect()
+            text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
+            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 70
+
+            screen.blit(basic_surface, text_rect)
+
+            # self.reconnect_button.draw(screen)
+
+        # self.button.draw(screen)
+
+
+class IngameScreen(PacketListener):
+    def __init__(self):
+        self.background = ProjectGlobals.load_image("ingame_grass_background")
+
+    def draw(self, screen: pygame.Surface):
+        screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
+
+    def update(self):
+        pass
 
 
 class Game:
@@ -183,25 +217,31 @@ class Game:
         pygame.init()  # Subsysteme starten
 
         pygame.display.set_caption("HeroesOfCatch")
-        self.screen = pygame.display.set_mode(ProjectGlobals.SCREEN_RECT.size, pygame.NOFRAME)
+        self.screen = pygame.display.set_mode(ProjectGlobals.SCREEN_RECT.size)  # , pygame.NOFRAME
         self.clock = pygame.time.Clock()  # Taktgeber
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 14)
 
         self.connecting = LoadingScreen()
+        self.ingame = IngameScreen()
+        self.current_screen = 0
 
         # self.button_handler = ButtonHandler()
 
         self.running = True  # Flagvariable
 
     def run(self):
-        while self.running:  # Hauptprogrammschleife
-            self.clock.tick(ProjectGlobals.FPS)  # Auf mind. 1/60s takten
+        try:
+            while self.running:  # Hauptprogrammschleife
+                self.clock.tick(ProjectGlobals.FPS)  # Auf mind. 1/60s takten
 
-            self.watch_for_events()
-            self.update()
-            self.draw()
+                self.watch_for_events()
+                self.update()
+                self.draw()
+        except KeyboardInterrupt:
+            pygame.quit()
 
+        ProjectGlobals.SERVER_CONNECTION.stop()
         pygame.quit()  # Subssysteme stoppen
 
     def watch_for_events(self):
@@ -223,12 +263,18 @@ class Game:
                     #   self.connecting.set_to_default()
                     pass
 
+    def get_current_screen(self) -> object:
+        if self.current_screen == 0:
+            return self.connecting
+        elif self.current_screen == 1:
+            return self.ingame
+
     def update(self):
-        self.connecting.update()
+        self.get_current_screen().update()
         pass
 
     def draw(self):
-        self.connecting.draw(self.screen)
+        self.get_current_screen().draw(self.screen)
 
         # Credits
         text = "HeroesOfCatch v.1.0 von Leon Rüsing"

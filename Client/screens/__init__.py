@@ -61,6 +61,8 @@ class LoadingScreen:
         self.error_active = False
         self.error_message = None
 
+        self.loading_state = None
+
         self.loading_cirlce = LoadingCircle()
         self.loading_cirlce.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
         self.loading_cirlce.rect.centery = ProjectGlobals.SCREEN_RECT.centery
@@ -79,12 +81,15 @@ class LoadingScreen:
         # self.set_to_error("Server konnte nicht erreicht werden!")
 
     def connect(self):
+        self.loading_state = "Stelle Verbindung mit Server her"
         connected, error = ProjectGlobals.SERVER_CONNECTION.connect()
-
-        print(f"Connected {connected}, Error: {error}")
+        self.loading_state = "Verbunden, warte auf Austausch"
+        threading.Thread(target=ProjectGlobals.SERVER_CONNECTION.listen).start()
 
         if not connected:
             self.set_to_error("Der Verbindungsaufbau zum Server schlug fehl!")
+        else:
+            self.loading_state = ""
 
     def set_to_default(self):
         self.error_active = False
@@ -104,9 +109,8 @@ class LoadingScreen:
         screen.fill(color=(0, 0, 0), rect=ProjectGlobals.SCREEN_RECT)
 
         if not self.error_active:
-            text = "Stelle Verbindung mit Server her"
-            basic_surface = self.font.render(text + ' ...', True, (255, 255, 255))
-            headline_surface = self.font.render(text + ' ' + self.loading_points_animation.get_current_step(), True,
+            basic_surface = self.font.render(self.loading_state + ' ...', True, (255, 255, 255))
+            headline_surface = self.font.render(self.loading_state + ' ' + self.loading_points_animation.get_current_step(), True,
                                                 (255, 255, 255))
 
             text_rect = basic_surface.get_rect()

@@ -1,17 +1,52 @@
 import socket
+import threading
 
 
-class ConnectionHandler:
+class DisconnectListener:
+    def on_disconnect(self, client_connection: object):
+        pass
+
+
+class ClientConnection:
+    def __init__(self, client_socket: socket.socket, disconnect_listener: DisconnectListener):
+        self.socket = client_socket
+        self.disconnect_listener = disconnect_listener
+
+    def listen_for_pakets(self):
+        try:
+            while True:
+                paket_id = self.socket.recv(1024).decode()
+                print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
+        # Catch every exception
+        except Exception:
+            self.disconnect_listener.on_disconnect(self)
+            self.socket.close()
+            return
+
+
+class ConnectionHandler(DisconnectListener):
     def __init__(self, server_socket: socket):
-        self.connections: list[socket] = []
+        self.connections: list[ClientConnection] = []
         self.server_socket = server_socket
+
+    def on_disconnect(self, client_connection: object):
+        print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection}')
+        self.connections.remove(client_connection)
 
     def wait_for_incomming_connections(self):
         self.server_socket.listen()
 
         while True:
             (client_socket, clientIP) = self.server_socket.accept()
-            self.connections.append(client_socket)
+
+            client_connection = ClientConnection(client_socket, self)
+            threading.Thread(target=client_connection.listen_for_pakets).start()
+
+            self.connections.append(client_connection)
+
+            # Send welcome
+            client_socket.sendall("0".encode())
+
             print('[ConnectionHandler]', f'Eingehende Verbindung von: {clientIP}')
             pass
 
