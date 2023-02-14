@@ -31,7 +31,7 @@ class ServerConnection:
             return False, str(msg)
 
     def trigger_packet_listener(self, packet_id: int):
-        for i in self.paket_listeners:
+        for i in self.packet_listeners:
             i.on_paket_reveived(packet_id=packet_id)
 
     def listen(self):

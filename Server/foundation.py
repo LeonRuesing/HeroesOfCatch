@@ -8,8 +8,9 @@ class DisconnectListener:
 
 
 class ClientConnection:
-    def __init__(self, client_socket: socket.socket, disconnect_listener: DisconnectListener):
+    def __init__(self, client_socket: socket.socket, client_ip: str, disconnect_listener: DisconnectListener):
         self.socket = client_socket
+        self.client_ip = client_ip
         self.disconnect_listener = disconnect_listener
 
     def listen_for_pakets(self):
@@ -20,7 +21,7 @@ class ClientConnection:
                 print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
         # Catch every exception
         except Exception as e:
-            print(e.__cause__)
+            print('[ClientConnection]', 'Fehler bei der Datenübertragung: ' + str(e))
             self.disconnect_listener.on_disconnect(self)
             self.socket.close()
             return
@@ -31,25 +32,24 @@ class ConnectionHandler(DisconnectListener):
         self.connections: list[ClientConnection] = []
         self.server_socket = server_socket
 
-    def on_disconnect(self, client_connection: object):
-        print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection}')
+    def on_disconnect(self, client_connection: ClientConnection):
+        print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection.client_ip}')
         self.connections.remove(client_connection)
 
     def wait_for_incomming_connections(self):
         self.server_socket.listen()
 
         while True:
-            (client_socket, clientIP) = self.server_socket.accept()
+            (client_socket, client_ip) = self.server_socket.accept()
+            print('[ConnectionHandler]', f'Eingehende Verbindung von: {client_ip}')
 
-            client_connection = ClientConnection(client_socket, self)
+            client_connection = ClientConnection(client_socket, client_ip, self)
             threading.Thread(target=client_connection.listen_for_pakets).start()
 
             self.connections.append(client_connection)
 
             # Send welcome
             client_socket.sendall("0".encode())
-
-            print('[ConnectionHandler]', f'Eingehende Verbindung von: {clientIP}')
             pass
 
 
