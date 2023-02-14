@@ -1,7 +1,5 @@
 import socket
 
-import foundation
-
 
 class ServerConnection:
     def __init__(self, ip, port):
@@ -11,7 +9,7 @@ class ServerConnection:
         self.connected = False
         self.error = False
         self.state = ""
-        self.paket_listeners: list[foundation.PacketListener] = []
+        # self.paket_listeners: list[foundation.PacketListener] = []
 
     def connect(self):
         try:
@@ -31,8 +29,9 @@ class ServerConnection:
             return False, str(msg)
 
     def trigger_packet_listener(self, packet_id: int):
-        for i in self.paket_listeners:
-            i.on_paket_reveived(packet_id=packet_id)
+        # for i in self.paket_listeners:
+        #    i.on_paket_reveived(packet_id=packet_id)
+        pass
 
     def listen(self):
         while True:

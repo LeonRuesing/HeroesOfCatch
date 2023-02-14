@@ -1,6 +1,8 @@
 import threading
-from foundation import ProjectGlobals
+from backend.shared import ProjectGlobals
+from backend.shared import HandlerGlobals
 from foundation import pygame
+
 
 class LoadingCircle:
     def __init__(self):
@@ -53,103 +55,89 @@ class LoadingScreen:
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
         self.headline_font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
-        self.background = ProjectGlobals.load_image("lobby_background")
+        self.background = pygame.transform.scale(ProjectGlobals.load_image("lobby_background"),
+                                                 ProjectGlobals.SCREEN_RECT.size)
+        self.error_icon = ProjectGlobals.load_image("error_icon")
         self.stateTextBackground = ProjectGlobals.load_image("lobby_state_text_background")
         self.stateTextBackground = pygame.transform.scale(self.stateTextBackground, (500, 100))
-        self.loading_points_animation = LoadingPointAnimation(200)
 
         self.error_active = False
         self.error_message = None
 
-        self.loading_state = None
+        self.loading_state = ""
 
         self.loading_cirlce = LoadingCircle()
         self.loading_cirlce.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
         self.loading_cirlce.rect.centery = ProjectGlobals.SCREEN_RECT.centery
 
-        #self.button = utils.Button("close_button", text=None)
-        #self.button.rect.right = ProjectGlobals.SCREEN_RECT.right
-
-        #self.reconnect_button = utils.Button("button_reconnect", text="Neu verbinden")
-        #self.reconnect_button.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-        #self.reconnect_button.rect.centery = ProjectGlobals.SCREEN_RECT.centery + 75
-
-        #mains.Main.game.button_handler.button_list.append(self.button)
-        #mains.Main.game.button_list.append(self.reconnect_button)
+        # mains.Main.game.button_handler.button_list.append(self.button)
+        # mains.Main.game.button_list.append(self.reconnect_button)
 
         self.set_to_default()
         # self.set_to_error("Server konnte nicht erreicht werden!")
 
     def connect(self):
-        self.loading_state = "Stelle Verbindung mit Server her"
-        connected, error = ProjectGlobals.SERVER_CONNECTION.connect()
-        self.loading_state = "Verbunden, warte auf Austausch"
-        threading.Thread(target=ProjectGlobals.SERVER_CONNECTION.listen).start()
+        try:
+            connected, error = HandlerGlobals.SERVER_CONNECTION.connect()
 
-        if not connected:
-            self.set_to_error("Der Verbindungsaufbau zum Server schlug fehl!")
-        else:
-            self.loading_state = ""
+            if not connected:
+                return
+
+            threading.Thread(target=HandlerGlobals.SERVER_CONNECTION.listen).start()
+        except:
+            #self.set_to_error("Bei der Verbindung zum Server ist ein Problem aufgetreten")
+            print('connection error')
+
+    # Override
+    def on_paket_reveived(self, packet_id: int):
+        if packet_id == 0:
+            HandlerGlobals.SERVER_CONNECTION.state = "Kommunikation mit Server erfolgreich, Anmelden..."
+            pass
 
     def set_to_default(self):
-        self.error_active = False
         threading.Thread(target=self.connect).start()
 
-    def set_to_error(self, error: str):
-        self.error_message = error
-        self.error_active = True
-
     def update(self):
-        self.loading_points_animation.check_if_next_step()
         pass
 
     def draw(self, screen: pygame.Surface):
-        # screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
+        screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
 
-        screen.fill(color=(0, 0, 0), rect=ProjectGlobals.SCREEN_RECT)
-
-        if not self.error_active:
-            basic_surface = self.font.render(self.loading_state + ' ...', True, (255, 255, 255))
-            headline_surface = self.font.render(self.loading_state + ' ' + self.loading_points_animation.get_current_step(), True,
-                                                (255, 255, 255))
+        if not HandlerGlobals.SERVER_CONNECTION.error:
+            basic_surface = self.font.render(HandlerGlobals.SERVER_CONNECTION.state, True, (255, 255, 255))
+            # headline_surface = self.font.render(text, True,
+            # (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
             text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
             text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 100
 
-            screen.blit(headline_surface, text_rect)
+            screen.blit(basic_surface, text_rect)
 
             self.loading_cirlce.draw(screen)
         else:
-            rect = self.stateTextBackground.get_rect()
-            rect.center = ProjectGlobals.SCREEN_RECT.center
-            # screen.blit(self.stateTextBackground, rect)
+            error_icon_rect = self.error_icon.get_rect()
+            error_icon_rect.center = ProjectGlobals.SCREEN_RECT.center
 
-            # Headline
-            text = "Etwas ist schiefgelaufen!"
+            screen.blit(self.error_icon, error_icon_rect)
 
-            basic_surface = self.headline_font.render(text, True, (200, 0, 0))
-
-            text_rect = basic_surface.get_rect()
-            text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery - 10
-
-            screen.blit(basic_surface, text_rect)
-
-            # Error text
-            text = self.error_message
+            text = HandlerGlobals.SERVER_CONNECTION.state
             basic_surface = self.font.render(text, True, (255, 255, 255))
 
             text_rect = basic_surface.get_rect()
             text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
-            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 10
+            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 50
 
             screen.blit(basic_surface, text_rect)
 
-            self.reconnect_button.draw(screen)
+            text = "Klicken Sie auf den Bildschirm, um neu zu verbinden!"
+            basic_surface = self.font.render(text, True, (255, 255, 255))
 
-        self.button.draw(screen)
+            text_rect = basic_surface.get_rect()
+            text_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
+            text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 70
 
+            screen.blit(basic_surface, text_rect)
 
 class LobbyScreen:
     def __init__(self):
