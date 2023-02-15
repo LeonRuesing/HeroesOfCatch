@@ -2,6 +2,8 @@ import os
 import pygame
 
 import backend
+import frontend.screens
+from backend.handler import ScreenHandler
 from frontend.screens import LoadingScreen
 
 
@@ -13,15 +15,13 @@ class Game:
         pygame.init()  # Subsysteme starten
 
         pygame.display.set_caption("HeroesOfCatch")
-        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size)  # , pygame.NOFRAME
+        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size, pygame.NOFRAME)  # ,
         self.clock = pygame.time.Clock()  # Taktgeber
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 14)
 
         self.connecting = LoadingScreen()
         self.current_screen = 0
-
-        # self.button_handler = ButtonHandler()
 
         self.running = True  # Flagvariable
 
@@ -36,7 +36,7 @@ class Game:
         except KeyboardInterrupt:
             pygame.quit()
 
-        backend.shared.HandlerGlobals.SERVER_CONNECTION.stop()
+        backend.shared.HandlerGlobals.SERVER_CONNECTION.stop() # Serververbindung abbrechen
         pygame.quit()  # Subssysteme stoppen
 
     def watch_for_events(self):
@@ -51,8 +51,11 @@ class Game:
                 pass
 
     def get_current_screen(self) -> object:
-        if self.current_screen == 0:
+        screen_id = backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen
+        if screen_id == 0:
             return self.connecting
+        elif screen_id == 1:
+            return frontend.screens.lobby.LobbyScreen()
 
     def update(self):
         self.get_current_screen().update()

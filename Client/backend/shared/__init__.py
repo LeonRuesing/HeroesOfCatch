@@ -8,7 +8,7 @@ import os
 
 
 class ProjectGlobals:
-    SCREEN_RECT = pygame.rect.Rect(0, 0, 600, 600)
+    SCREEN_RECT = pygame.rect.Rect(0, 0, 800, 800)
     FPS = 60
 
     IP = "localhost"
@@ -23,6 +23,9 @@ class ProjectGlobals:
 class HandlerGlobals:
     import backend.networking
     SERVER_CONNECTION = backend.networking.ServerConnection(ProjectGlobals.IP, ProjectGlobals.PORT)
+
+    import backend.handler
+    SCREEN_HANDLER = backend.handler.ScreenHandler()
 
 
 class ControllerGlobals:

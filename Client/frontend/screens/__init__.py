@@ -1,5 +1,5 @@
 import threading
-from backend.shared import ProjectGlobals, ControllerGlobals
+from backend.shared import ControllerGlobals, ProjectGlobals
 from backend.shared import HandlerGlobals
 from foundation import pygame
 
@@ -64,8 +64,6 @@ class LoadingScreen:
         self.error_active = False
         self.error_message = None
 
-        self.loading_state = ""
-
         self.loading_cirlce = LoadingCircle()
         self.loading_cirlce.rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
         self.loading_cirlce.rect.centery = ProjectGlobals.SCREEN_RECT.centery
@@ -120,12 +118,3 @@ class LoadingScreen:
             text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 70
 
             screen.blit(basic_surface, text_rect)
-
-
-class LobbyScreen:
-    def __init__(self):
-        self.background = pygame.image.load("lobby_background.png").convert()
-        pass
-
-    def draw(self, screen):
-        screen.blit(self.background, ProjectGlobals.SCREEN_RECT)

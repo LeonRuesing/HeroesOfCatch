@@ -1,5 +1,6 @@
 import socket
 
+import backend.handler
 from backend.shared import PacketListener
 
 
@@ -42,6 +43,8 @@ class ServerConnection:
                 print("[Networking] Packet erhalten mit ID", paket_id)
 
             except Exception:
+                # Set to loading screen
+                backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
                 self.state = "Problem bei der Datenübertragung!"
                 self.error = True
                 self.stop()

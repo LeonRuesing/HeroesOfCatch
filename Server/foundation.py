@@ -18,6 +18,13 @@ class ClientConnection:
             while True:
                 paket_id = int(self.socket.recv(1024).decode())
 
+                # Login
+                if paket_id == 2:
+                    username = str(self.socket.recv(1024).decode())
+                    print(f"Login-Versuch mit '{username}'")
+                    self.socket.sendall('1'.encode())
+
+
                 print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
         # Catch every exception
         except Exception as e:
