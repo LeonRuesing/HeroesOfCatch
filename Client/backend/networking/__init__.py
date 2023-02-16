@@ -31,7 +31,7 @@ class ServerConnection:
             self.stop()
             return False, str(msg)
 
-    def trigger_packet_listener(self, packet_id: int, data: str):
+    def trigger_packet_listener(self, packet_id: int, data: list[str]):
         for i in self.packet_listeners:
             i.on_packet_reveived(packet_id=packet_id, data=data)
 

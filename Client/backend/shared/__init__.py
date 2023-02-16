@@ -1,5 +1,5 @@
 class PacketListener:
-    def on_packet_reveived(self, packet_id: int, data: str):
+    def on_packet_reveived(self, packet_id: int, data: list[str]):
         pass
 
 
