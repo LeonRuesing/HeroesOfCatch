@@ -5,6 +5,7 @@ import backend
 import frontend.screens
 from backend.handler import ScreenHandler
 from frontend.screens import LoadingScreen
+from frontend.screens.lobby import LobbyScreen
 
 
 class Game:
@@ -15,8 +16,10 @@ class Game:
         pygame.init()  # Subsysteme starten
 
         pygame.display.set_caption("HeroesOfCatch")
-        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size, pygame.NOFRAME)  # ,
+        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size, pygame.FULLSCREEN)  # ,
         self.clock = pygame.time.Clock()  # Taktgeber
+
+        backend.shared.ProjectGlobals.SCREEN_RECT.size = (self.screen.get_width(), self.screen.get_height())
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 14)
 
@@ -55,7 +58,7 @@ class Game:
         if screen_id == 0:
             return self.connecting
         elif screen_id == 1:
-            return frontend.screens.lobby.LobbyScreen()
+            return LobbyScreen()
 
     def update(self):
         self.get_current_screen().update()

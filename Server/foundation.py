@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 
 class DisconnectListener:
@@ -16,14 +17,18 @@ class ClientConnection:
     def listen_for_pakets(self):
         try:
             while True:
-                paket_id = int(self.socket.recv(1024).decode())
+                raw = str(self.socket.recv(1024).decode())
+                data = raw.split(";")
+                paket_id = int(data[0])
 
                 # Login
-                if paket_id == 2:
-                    username = str(self.socket.recv(1024).decode())
-                    print(f"Login-Versuch mit '{username}'")
-                    self.socket.sendall('1'.encode())
-
+                if paket_id == 1:
+                    time.sleep(1)  # Cooldown
+                    print(raw)
+                    username = str(data[1])
+                    key = str(data[2])
+                    print(f"Login-Versuch mit '{username},{key}'")
+                    self.socket.sendall(f'1;{username}'.encode())
 
                 print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
         # Catch every exception
@@ -74,7 +79,7 @@ class ServerFoundation:
             self.server_socket.bind((self.host, self.port))
             print('[Start]', f'Server erfolgreich gestartet bei {self.host}:{self.port}')
         except socket.error as msg:
-            print('[ERROR]', f'{msg[0]}: {msg[1]}')
+            print('[ERROR]', str(msg))
 
 
 if __name__ == '__main__':

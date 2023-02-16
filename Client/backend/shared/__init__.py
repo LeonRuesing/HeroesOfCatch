@@ -1,5 +1,5 @@
 class PacketListener:
-    def on_paket_reveived(self, packet_id: int):
+    def on_packet_reveived(self, packet_id: int, data: str):
         pass
 
 
@@ -26,6 +26,7 @@ class HandlerGlobals:
 
     import backend.handler
     SCREEN_HANDLER = backend.handler.ScreenHandler()
+    LOGIN_HANDLER = backend.handler.LoginHandler()
 
 
 class ControllerGlobals:
