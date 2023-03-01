@@ -6,3 +6,8 @@ class ScreenHandler:
 class LoginHandler:
     def __init__(self):
         self.username = None
+
+
+class IngameEntityHandler:
+    def __init__(self):
+        self.entities = []

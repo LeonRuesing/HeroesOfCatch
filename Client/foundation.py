@@ -6,17 +6,20 @@ import frontend.screens
 from backend.handler import ScreenHandler
 from frontend.screens import LoadingScreen
 from frontend.screens.lobby import LobbyScreen
+from frontend.screens.lobby import IngameScreen
 
 
 class Game:
     def __init__(self):
         # self.shared = foundation.Globals()
 
+        backend.shared.ProjectGlobals.SCREEN_RECT.size = (960, 540)
+
         os.environ['SDL_VIDEO_CENTERED'] = '1'  # Fensterkoordinaten
         pygame.init()  # Subsysteme starten
 
         pygame.display.set_caption("HeroesOfCatch")
-        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size, pygame.FULLSCREEN)  # ,
+        self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size)  # ,
         self.clock = pygame.time.Clock()  # Taktgeber
 
         backend.shared.ProjectGlobals.SCREEN_RECT.size = (self.screen.get_width(), self.screen.get_height())
@@ -59,6 +62,8 @@ class Game:
             return self.connecting
         elif screen_id == 1:
             return LobbyScreen()
+        elif screen_id == 2:
+            return IngameScreen()
 
     def update(self):
         self.get_current_screen().update()

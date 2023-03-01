@@ -1,12 +1,14 @@
 import socket
 import threading
 import time
-
+import random
 
 class DisconnectListener:
     def on_disconnect(self, client_connection: object):
         pass
 
+class ServerGlobals:
+    connections = []
 
 class ClientConnection:
     def __init__(self, client_socket: socket.socket, client_ip: str, disconnect_listener: DisconnectListener):
@@ -30,6 +32,10 @@ class ClientConnection:
                     print(f"Login-Versuch mit '{username},{key}'")
                     self.socket.sendall(f'1;{username}'.encode())
 
+                    add_data = f'2;{username};{random.randint(0, 500)};{random.randint(0, 500)}'.encode()
+                    for i in ServerGlobals.connections:
+                        i.socket.sendall(add_data)
+
                 print(f'[ClientConnection] Der Client {socket.gethostname()} sendete Paket {paket_id}')
         # Catch every exception
         except Exception as e:
@@ -41,12 +47,12 @@ class ClientConnection:
 
 class ConnectionHandler(DisconnectListener):
     def __init__(self, server_socket: socket):
-        self.connections: list[ClientConnection] = []
+        #self.connections: list[ClientConnection] = []
         self.server_socket = server_socket
 
     def on_disconnect(self, client_connection: ClientConnection):
         print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection.client_ip}')
-        self.connections.remove(client_connection)
+        ServerGlobals.connections.remove(client_connection)
 
     def wait_for_incomming_connections(self):
         self.server_socket.listen()
@@ -58,7 +64,7 @@ class ConnectionHandler(DisconnectListener):
             client_connection = ClientConnection(client_socket, client_ip, self)
             threading.Thread(target=client_connection.listen_for_pakets).start()
 
-            self.connections.append(client_connection)
+            ServerGlobals.connections.append(client_connection)
 
             # Send welcome
             client_socket.sendall("0".encode())
