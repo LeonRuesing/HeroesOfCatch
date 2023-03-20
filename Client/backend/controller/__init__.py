@@ -41,7 +41,9 @@ class IngameScreenController(PacketListener):
         HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
 
     def on_packet_reveived(self, packet_id: int, data: str):
+        print('packet_id', packet_id)
         if packet_id == 2:
+            print("Add= " + str(data))
             username = data[1] #temp
             x = int(data[2])
             y = int(data[3])
@@ -52,3 +54,23 @@ class IngameScreenController(PacketListener):
 
             HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
             print(f'Spawn new hero "{username}"')
+        elif packet_id == 3:
+            print("Transfer= " + str(data))
+
+            index = 1
+
+            while index + 3 <= len(data):
+                username = data[index]
+                index += 1
+                x = int(data[index])
+                index += 1
+                y = int(data[index])
+                index += 1
+
+                print(f'{username}, {x}, {y}')
+
+                hero = backend.supers.Hero(username)
+                hero.x = x
+                hero.y = y
+
+                HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
