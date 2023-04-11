@@ -5,6 +5,7 @@ import backend.supers
 import backend.shared
 from backend.shared import PacketListener, HandlerGlobals
 
+
 class LoadingScreenController(PacketListener):
 
     def __init__(self):
@@ -43,23 +44,13 @@ class IngameScreenController(PacketListener):
     def on_packet_reveived(self, packet_id: int, data: str):
         print('packet_id', packet_id)
         if packet_id == 2:
-            print("Add= " + str(data))
-            username = data[1] #temp
-            x = int(data[2])
-            y = int(data[3])
-
-            hero = backend.supers.Hero(username)
-            hero.x = x
-            hero.y = y
-
-            HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
-            print(f'Spawn new hero "{username}"')
-        elif packet_id == 3:
             print("Transfer= " + str(data))
 
             index = 1
 
-            while index + 3 <= len(data):
+            while index + 4 <= len(data):
+                id = int(data[index])
+                index += 1
                 username = data[index]
                 index += 1
                 x = int(data[index])
@@ -67,10 +58,26 @@ class IngameScreenController(PacketListener):
                 y = int(data[index])
                 index += 1
 
-                print(f'{username}, {x}, {y}')
+                print(f'{id} {username}, {x}, {y}')
 
-                hero = backend.supers.Hero(username)
+                hero = backend.supers.Hero(id, username)
                 hero.x = x
                 hero.y = y
 
                 HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
+        elif packet_id == 3:
+            index = 1
+
+            while index + 3 <= len(data):
+                id = int(data[index])
+                index += 1
+                x = float(data[index])
+                index += 1
+                y = float(data[index])
+                index += 1
+
+                hero = HandlerGlobals.INGAME_ENTITY_HANDLER.get_entity_by_id(id)
+
+                if hero is not None:
+                    hero.x = x
+                    hero.y = y
