@@ -32,6 +32,7 @@ class HandlerGlobals:
     SCREEN_HANDLER = backend.handler.ScreenHandler()
     LOGIN_HANDLER = backend.handler.LoginHandler()
     INGAME_ENTITY_HANDLER = backend.handler.IngameEntityHandler()
+    MOVEMENT_HANDLER = backend.handler.MovementHandler()
 
 
 class ControllerGlobals:

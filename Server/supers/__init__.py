@@ -24,7 +24,32 @@ class PlayerCharacter:
         self.username = username
         self.x = x
         self.y = y
+        self.movement = [0, 0, 0, 0]
 
 class Round:
     def __init__(self):
         self.users: list[UserConnectionLink] = []
+
+
+class ActiveRound:
+    def __init__(self, round: Round):
+        self.round = round
+        self.running = False
+        self.player_characters = list[PlayerCharacter]()
+
+    def user_present(self, username):
+        for i in self.round.users:
+            if username == i.username:
+                return True
+        return False
+
+    def update_movement_for_user(self, username, movement):
+        character = self.get_character_by_username(username)
+        if character is not None:
+            character.movement = movement
+
+    def get_character_by_username(self, username):
+        for i in self.player_characters:
+            if i.username == username:
+                return i
+        return None

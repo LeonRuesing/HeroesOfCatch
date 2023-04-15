@@ -53,8 +53,13 @@ class Game:
                 # self.button_handler.update_button_hover(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 pass
             elif event.type == pygame.MOUSEBUTTONUP:
-                self.connecting.set_to_default()
+                if backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen == 0:
+                    self.connecting.set_to_default()
                 pass
+            elif event.type == pygame.KEYUP:
+                backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
+            elif event.type == pygame.KEYDOWN:
+                backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 1)
 
     def get_current_screen(self) -> object:
         screen_id = backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen

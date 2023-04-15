@@ -38,7 +38,7 @@ class LobbyScreen:
 
         text_rect = basic_surface.get_rect()
         text_rect.centery = self.profile_rect.centery
-        text_rect.left = self.profile_level_rect.right + 15
+        text_rect.left = self.profile_level_rect.left + 10
 
         screen.blit(basic_surface, text_rect)
         pass

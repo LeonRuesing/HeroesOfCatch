@@ -6,33 +6,39 @@ from shared import DataHandler, ServerGlobals
 from supers import *
 
 
-class ActiveRound:
-    def __init__(self, round: Round):
-        self.round = round
+class ActiveRoundHandler:
+    def __init__(self, active_round: ActiveRound):
         self.running = False
-        self.player_characters = list[PlayerCharacter]()
+        self.active_round = active_round
 
     def start_game(self):
         # Prepare round
         self.create_characters()
 
         # Send to player
-        self.transfer_data_to_players(DataHandler.get_character_transfer_data(self.player_characters))
+        self.transfer_data_to_players(DataHandler.get_character_transfer_data(self.active_round.player_characters))
 
         # Start game
         self.start_game_loop()
 
     def create_characters(self):
-        for i in self.round.users:
+        for i in self.active_round.round.users:
             player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300))
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y}')
-            self.player_characters.append(player_character)
+            self.active_round.player_characters.append(player_character)
 
     def transfer_data_to_players(self, data):
         for i in ServerGlobals.CONNECTION_LINKS:
-            if self.user_present(i.username):
+            if self.active_round.user_present(i.username):
                 DataHandler.send_to_socket(i.socket, data)
+
+    def get_online_player_amount(self) -> int:
+        players_online = 0
+        for i in ServerGlobals.CONNECTION_LINKS:
+            if self.active_round.user_present(i.username):
+                players_online += 1
+        return players_online
 
     def start_game_loop(self):
         self.running = True
@@ -40,16 +46,21 @@ class ActiveRound:
 
     def game_loop(self):
         while self.running:
-            for i in self.player_characters:
-                i.x += 0.5
-                i.y += 0
-            time.sleep(0.010)
-            self.transfer_data_to_players(DataHandler.get_character_pos_update(self.player_characters))
+            # Check if players are still there
+            if self.get_online_player_amount() == 0:
+                self.running = False
+                print('[INFO] Eine Runde wurde abgebrochen.')
+                return
 
-    def user_present(self, username):
-        for i in self.round.users:
-            #print(i.username, username)
-            if username == i.username:
-                return True
-            #print('False')
-        return False
+            for i in self.active_round.player_characters:
+                if i.movement[0]:
+                    i.x -= 3
+                elif i.movement[1]:
+                    i.x += 3
+
+                if i.movement[2]:
+                    i.y -= 3
+                elif i.movement[3]:
+                    i.y += 3
+            time.sleep(0.016)
+            self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))

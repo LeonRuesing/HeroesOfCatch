@@ -1,7 +1,7 @@
 import threading
 import time
 
-from ingame import ActiveRound
+from ingame import ActiveRoundHandler
 from shared import *
 
 
@@ -22,18 +22,36 @@ class PacketListener:
                 username = str(data[1])
                 key = str(data[2])
 
+                print(f"Login-Versuch mit '{username},{key}'")
+                socket.sendall(f'1;{username}'.encode())
+
                 ServerGlobals.CONNECTION_LINKS.append(UserConnectionLink(socket, username))
 
                 #temp create new round
                 if len(ServerGlobals.CONNECTION_LINKS) == 2:
                     round = Round()
-                    round.users = ServerGlobals.CONNECTION_LINKS
+                    round.users = ServerGlobals.CONNECTION_LINKS.copy()
 
-                    ingame_handler = ActiveRound(round)
-                    ingame_handler.start_game()
+                    active_round = ActiveRound(round)
+                    ServerGlobals.ACTIVE_ROUNDS.append(active_round)
 
-                print(f"Login-Versuch mit '{username},{key}'")
-                socket.sendall(f'1;{username}'.encode())
+                    active_round_handler = ActiveRoundHandler(active_round)
+                    active_round_handler.start_game()
+            elif paket_id == 2:
+                round_username = ServerGlobals.get_username_by_socket(socket).username
+                active_round = ServerGlobals.get_round_by_username(round_username)
+                print(f'Active round {active_round}')
+
+                left = int(data[1])
+                right = int(data[2])
+                top = int(data[3])
+                bottom = int(data[4])
+
+                print(f'{left} {right} {top} {bottom}')
+
+                movement = (left, right, top, bottom)
+                active_round.update_movement_for_user(round_username, movement)
+
 
             print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {paket_id}')
 
@@ -44,6 +62,7 @@ class ConnectionHandler(DisconnectListener):
 
     def on_disconnect(self, client_connection: ClientConnection):
         print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection.client_ip}')
+        ServerGlobals.CONNECTION_LINKS.remove(ServerGlobals.get_connection_link_by_socket(client_connection))
         ServerGlobals.CONNECTIONS.remove(client_connection)
 
     def wait_for_incomming_connections(self):

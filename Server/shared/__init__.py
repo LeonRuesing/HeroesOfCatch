@@ -6,6 +6,26 @@ class ServerGlobals:
     CONNECTION_LINKS = list[UserConnectionLink]()
     PORT = 56021
 
+    ACTIVE_ROUNDS = list[ActiveRound]()
+
+    @staticmethod
+    def get_connection_link_by_socket(client_connection: ClientConnection) -> UserConnectionLink:
+        for i in ServerGlobals.CONNECTION_LINKS:
+            if i.socket == client_connection.socket:
+                return i
+
+    @staticmethod
+    def get_username_by_socket(socket: socket.socket) -> UserConnectionLink:
+        for i in ServerGlobals.CONNECTION_LINKS:
+            if i.socket == socket:
+                return i
+
+    @staticmethod
+    def get_round_by_username(username: str) -> ActiveRound:
+        for i in ServerGlobals.ACTIVE_ROUNDS:
+            if i.user_present(username):
+                return i
+        return None
 
 class DataHandler:
     def __init__(self):

@@ -32,7 +32,7 @@ class LoadingScreenController(PacketListener):
             print(f"Anmelden mit {username}")
             print(packet_id)
         elif packet_id == 1:
-            HandlerGlobals.SCREEN_HANDLER.current_screen = 2
+            HandlerGlobals.SCREEN_HANDLER.current_screen = 1
             backend.shared.HandlerGlobals.LOGIN_HANDLER.username = data[1]
             print("Angemeldet mit: " + data[1])
 
@@ -45,7 +45,7 @@ class IngameScreenController(PacketListener):
         print('packet_id', packet_id)
         if packet_id == 2:
             print("Transfer= " + str(data))
-
+            HandlerGlobals.SCREEN_HANDLER.current_screen = 2
             index = 1
 
             while index + 4 <= len(data):
@@ -65,6 +65,10 @@ class IngameScreenController(PacketListener):
                 hero.y = y
 
                 HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
+
+                if hero.username == backend.shared.HandlerGlobals.LOGIN_HANDLER.username:
+                    backend.shared.HandlerGlobals.MOVEMENT_HANDLER.set_player(hero)
+
         elif packet_id == 3:
             index = 1
 
