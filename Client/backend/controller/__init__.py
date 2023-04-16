@@ -42,7 +42,7 @@ class IngameScreenController(PacketListener):
         HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
 
     def on_packet_reveived(self, packet_id: int, data: str):
-        print('packet_id', packet_id)
+        #print('packet_id', packet_id)
         if packet_id == 2:
             print("Transfer= " + str(data))
             HandlerGlobals.SCREEN_HANDLER.current_screen = 2
@@ -63,6 +63,7 @@ class IngameScreenController(PacketListener):
                 hero = backend.supers.Hero(id, username)
                 hero.x = x
                 hero.y = y
+                hero.hero_id = random.randint(0, 2)
 
                 HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
 

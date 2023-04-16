@@ -40,18 +40,14 @@ class PacketListener:
             elif paket_id == 2:
                 round_username = ServerGlobals.get_username_by_socket(socket).username
                 active_round = ServerGlobals.get_round_by_username(round_username)
-                print(f'Active round {active_round}')
 
                 left = int(data[1])
                 right = int(data[2])
                 top = int(data[3])
                 bottom = int(data[4])
 
-                print(f'{left} {right} {top} {bottom}')
-
                 movement = (left, right, top, bottom)
                 active_round.update_movement_for_user(round_username, movement)
-
 
             print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {paket_id}')
 

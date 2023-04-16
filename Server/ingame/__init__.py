@@ -54,13 +54,13 @@ class ActiveRoundHandler:
 
             for i in self.active_round.player_characters:
                 if i.movement[0]:
-                    i.x -= 3
+                    i.x -= 10
                 elif i.movement[1]:
-                    i.x += 3
+                    i.x += 10
 
                 if i.movement[2]:
-                    i.y -= 3
+                    i.y -= 10
                 elif i.movement[3]:
-                    i.y += 3
+                    i.y += 10
             time.sleep(0.016)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))

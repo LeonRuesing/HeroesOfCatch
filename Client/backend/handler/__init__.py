@@ -1,3 +1,5 @@
+from socket import socket
+
 import pygame.event
 
 import backend.shared
@@ -36,21 +38,18 @@ class MovementHandler:
 
     def check_keyboard_input(self, event: pygame.event.Event, active):
         key = event.key
-        print(str(key) + " " + str(active))
-        print(f'{key} {pygame.K_LEFT}')
-        if key == pygame.K_LEFT:
+
+        if key == pygame.K_LEFT or key == pygame.K_a:
             self.movement[0] = active
 
-        if key == pygame.K_RIGHT:
+        if key == pygame.K_RIGHT or key == pygame.K_d:
             self.movement[1] = active
 
-        if key == pygame.K_UP:
+        if key == pygame.K_UP or key == pygame.K_w:
             self.movement[2] = active
 
-        if key == pygame.K_DOWN:
+        if key == pygame.K_DOWN or key == pygame.K_s:
             self.movement[3] = active
-
-        print(str(key) + " " + str(active))
 
         self.send_update()
 
@@ -70,6 +69,7 @@ class MovementHandler:
 
     #TODO: Game crash after disconnect
     def send_update(self):
-        print(f'{self.movement[0]}')
-        backend.shared.HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(
-            f'2;{self.movement[0]};{self.movement[1]};{self.movement[2]};{self.movement[3]}'.encode())
+        if backend.shared.HandlerGlobals.SERVER_CONNECTION.connected:
+            print(f'{self.movement[0]}')
+            backend.shared.HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(
+                f'2;{self.movement[0]};{self.movement[1]};{self.movement[2]};{self.movement[3]}'.encode())

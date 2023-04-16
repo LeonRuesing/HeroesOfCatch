@@ -1,8 +1,12 @@
+from math import sqrt
+
+from pygame.color import lerp
+
 import backend.shared
+from backend.supers import Hero
 from foundation import pygame
 from backend.shared import ProjectGlobals
 from backend.shared import HandlerGlobals
-
 
 class LobbyScreen:
     def __init__(self):
@@ -50,13 +54,19 @@ class LobbyScreen:
 class IngameScreen:
     def __init__(self):
         self.background = ProjectGlobals.load_image("ingame_grass_background")
-        self.hero_test = ProjectGlobals.load_image("test")
+        self.heroes = [ProjectGlobals.load_image("test0"), ProjectGlobals.load_image("test1"), ProjectGlobals.load_image("test2")]
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
 
         for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
-            screen.blit(self.hero_test, (i.x, i.y))
+            screen.blit(self.heroes[i.hero_id], (i.x, i.y))
+
+    def lerp_xy(o1: Hero, o2, alpha, threshold=100):
+        """Expects namedtuples with x and y parameters."""
+        if sqrt((o1.x - o2.x) ** 2 + (o1.y - o2.y) ** 2) > 100:
+            return o2
+        return o1._replace(x=lerp(o1.x, o2.x, alpha), y=lerp(o1.y, o2.y, alpha))
 
     def update(self):
         pass
