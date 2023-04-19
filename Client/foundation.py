@@ -1,4 +1,6 @@
 import os
+import time
+
 import pygame
 
 import backend
@@ -27,18 +29,21 @@ class Game:
         self.font = pygame.font.Font(pygame.font.get_default_font(), 14)
 
         self.connecting = LoadingScreen()
+        self.lobby = LobbyScreen()
+        self.ingame = IngameScreen()
         self.current_screen = 0
 
         self.running = True  # Flagvariable
 
     def run(self):
+        last_time = time.time()
         try:
             while self.running:  # Hauptprogrammschleife
-                self.clock.tick(backend.shared.ProjectGlobals.FPS)  # Auf mind. 1/60s takten
+                delta = self.clock.tick(backend.shared.ProjectGlobals.FPS) / (1000 / backend.shared.ProjectGlobals.FPS)  # Auf mind. 1/60s takten
 
                 self.watch_for_events()
-                self.update()
-                self.draw()
+                self.update(delta)
+                self.draw(delta)
         except KeyboardInterrupt:
             pygame.quit()
 
@@ -55,6 +60,9 @@ class Game:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen == 0:
                     self.connecting.set_to_default()
+                else:
+                    backend.shared.HandlerGlobals.SERVER_CONNECTION.stop()
+                    backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
                 pass
             elif event.type == pygame.KEYUP:
                 backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
@@ -66,20 +74,19 @@ class Game:
         if screen_id == 0:
             return self.connecting
         elif screen_id == 1:
-            return LobbyScreen()
+            return self.lobby
         elif screen_id == 2:
-            return IngameScreen()
+            return self.ingame
 
-    def update(self):
-        self.get_current_screen().update()
+    def update(self, dt):
+        self.get_current_screen().update(dt)
         pass
 
-    def draw(self):
-        self.get_current_screen().draw(self.screen)
+    def draw(self, dt):
+        self.get_current_screen().draw(self.screen, dt)
 
         # Credits
-        text = "HeroesOfCatch v.1.0 von Leon Rüsing"
-
+        text = "HeroesOfCatch v.1.0 von Leon Rüsing | " + str(round(self.clock.get_fps(), 2)) + " FPS"
         basic_surface = self.font.render(text, True, (255, 255, 255))
 
         text_rect = basic_surface.get_rect()

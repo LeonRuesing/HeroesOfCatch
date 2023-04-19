@@ -19,6 +19,7 @@ class LoadingScreenController(PacketListener):
                 return
 
             threading.Thread(target=HandlerGlobals.SERVER_CONNECTION.listen).start()
+            #HandlerGlobals.SERVER_CONNECTION.listen()
         except:
             print('connection error')
 

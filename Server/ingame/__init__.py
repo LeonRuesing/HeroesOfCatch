@@ -44,7 +44,31 @@ class ActiveRoundHandler:
         self.running = True
         threading.Thread(target=self.game_loop).start()
 
+    def update(self, delta):
+        for i in self.active_round.player_characters:
+            if i.movement[0]:
+                i.x -= 10 * delta
+            elif i.movement[1]:
+                i.x += 10 * delta
+
+            if i.movement[2]:
+                i.y -= 10 * delta
+            elif i.movement[3]:
+                i.y += 10 * delta
+
+            if x < 0:
+                i.x = 960 - 150
+            elif i.x > 960 - 150:
+                i.x = 0
+
+            if i.y < 0:
+                i.y = 540 - 200
+            elif i.y > 540 - 200:
+                i.y = 0
+
     def game_loop(self):
+        delta = 0
+        last_update = 0
         while self.running:
             # Check if players are still there
             if self.get_online_player_amount() == 0:
@@ -52,15 +76,12 @@ class ActiveRoundHandler:
                 print('[INFO] Eine Runde wurde abgebrochen.')
                 return
 
-            for i in self.active_round.player_characters:
-                if i.movement[0]:
-                    i.x -= 10
-                elif i.movement[1]:
-                    i.x += 10
+            time.sleep(1/30)
 
-                if i.movement[2]:
-                    i.y -= 10
-                elif i.movement[3]:
-                    i.y += 10
-            time.sleep(0.016)
+            last_update_length = time.time() - last_update
+            delta = last_update_length / (1/30)
+            print(delta)
+            self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))
+
+            last_update = time.time()

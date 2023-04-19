@@ -53,20 +53,6 @@ class MovementHandler:
 
         self.send_update()
 
-    def update(self):
-        if self.__player_hero is None:
-            return
-
-        if self.movement[0]:
-            self.__player_hero.x -= 1
-        elif self.movement[1]:
-            self.__player_hero.x += 1
-
-        if self.movement[2]:
-            self.__player_hero.y -= 1
-        elif self.movement[3]:
-            self.__player_hero.y += 1
-
     #TODO: Game crash after disconnect
     def send_update(self):
         if backend.shared.HandlerGlobals.SERVER_CONNECTION.connected:

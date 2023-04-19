@@ -21,6 +21,7 @@ class ServerConnection:
             self.error = False
             self.connected = False
             self.client_socket = socket.socket()
+            self.client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.client_socket.connect((self.ip, self.port))
             self.connected = True
             self.state = "Verbunden, warte auf Kommunikation"
@@ -42,6 +43,7 @@ class ServerConnection:
                 data = raw.split(";")
                 packet_id = int(data[0])
                 self.trigger_packet_listener(packet_id, data)
+                print('test')
                 #print("[Networking] Packet erhalten mit ID", packet_id)
 
             except Exception as msg:
@@ -52,6 +54,7 @@ class ServerConnection:
                 self.error = True
                 self.stop()
                 break
+        print('End of method')
 
     def stop(self):
         self.connected = False

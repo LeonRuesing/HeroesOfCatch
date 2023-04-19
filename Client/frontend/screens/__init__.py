@@ -18,7 +18,7 @@ class LoadingCircle:
         rect.center = self.rect.center
         self.rect = rect
 
-    def draw(self, screen):
+    def draw(self, screen, dt):
         self.angle += 4
         self.rotate_image()
 
@@ -76,10 +76,10 @@ class LoadingScreen:
     def set_to_default(self):
         threading.Thread(target=ControllerGlobals.LOADING_SCREEN_CONTROLLER.connect).start()
 
-    def update(self):
+    def update(self, dt):
         pass
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface, dt):
         screen.blit(self.background, ProjectGlobals.SCREEN_RECT)
 
         if not HandlerGlobals.SERVER_CONNECTION.error:
@@ -93,7 +93,7 @@ class LoadingScreen:
 
             screen.blit(basic_surface, text_rect)
 
-            self.loading_cirlce.draw(screen)
+            self.loading_cirlce.draw(screen, dt)
         else:
             error_icon_rect = self.error_icon.get_rect()
             error_icon_rect.center = ProjectGlobals.SCREEN_RECT.center
