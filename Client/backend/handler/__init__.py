@@ -3,7 +3,8 @@ from socket import socket
 import pygame.event
 
 import backend.shared
-from backend.supers import Hero
+from backend.heroes import Rageo, Digla, Vaaslen
+from backend.supers import Character
 
 
 class ScreenHandler:
@@ -18,13 +19,18 @@ class LoginHandler:
 
 class IngameEntityHandler:
     def __init__(self):
-        self.entities = list[Hero]()
+        self.entities = list[Character]()
 
-    def get_entity_by_id(self, id) -> Hero:
+    def get_entity_by_id(self, id) -> Character:
         for i in self.entities:
             if i.id == id:
                 return i
         return None
+
+
+class HeroHandler:
+    def __init__(self):
+        self.heroes = {"0": Rageo, "1": Digla, "2": Vaaslen}
 
 
 class MovementHandler:
@@ -33,7 +39,7 @@ class MovementHandler:
 
         self.__player_hero = None
 
-    def set_player(self, player_hero: Hero):
+    def set_player(self, player_hero: Character):
         self.__player_hero = player_hero
 
     def check_keyboard_input(self, event: pygame.event.Event, active):
@@ -53,7 +59,7 @@ class MovementHandler:
 
         self.send_update()
 
-    #TODO: Game crash after disconnect
+    # TODO: Game crash after disconnect
     def send_update(self):
         if backend.shared.HandlerGlobals.SERVER_CONNECTION.connected:
             print(f'{self.movement[0]}')

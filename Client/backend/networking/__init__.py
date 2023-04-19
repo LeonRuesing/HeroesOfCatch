@@ -43,12 +43,11 @@ class ServerConnection:
                 data = raw.split(";")
                 packet_id = int(data[0])
                 self.trigger_packet_listener(packet_id, data)
-                print('test')
                 #print("[Networking] Packet erhalten mit ID", packet_id)
 
             except Exception as msg:
                 # Set to loading screen
-                #backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
+                backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
                 self.state = "Problem bei der Datenübertragung!"
                 print(msg)
                 self.error = True

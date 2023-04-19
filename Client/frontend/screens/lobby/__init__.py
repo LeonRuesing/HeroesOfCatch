@@ -3,7 +3,7 @@ from math import sqrt
 from pygame.color import lerp
 
 import backend.shared
-from backend.supers import Hero
+from backend.supers import Character
 from foundation import pygame
 from backend.shared import ProjectGlobals
 from backend.shared import HandlerGlobals
@@ -53,14 +53,13 @@ class LobbyScreen:
 class IngameScreen:
     def __init__(self):
         self.background = ProjectGlobals.load_image("ingame_grass_background")
-        self.heroes = [ProjectGlobals.load_image("test0"), ProjectGlobals.load_image("test1"), ProjectGlobals.load_image("test2")]
 
     def draw(self, screen, dt):
         screen.blit(self.background, (0, 0))
 
         for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
             #screen.blit(self.heroes[i.hero_id], (i.x, i.y))
-            screen.blit(self.heroes[i.hero_id], (i.interpolation_x, i.interpolation_y))
+            i.draw(screen)
             i.update(dt)
 
     def update(self, dt):

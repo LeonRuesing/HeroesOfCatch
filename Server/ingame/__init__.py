@@ -23,9 +23,10 @@ class ActiveRoundHandler:
 
     def create_characters(self):
         for i in self.active_round.round.users:
-            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300))
+            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300), PlayerCharacter.CharacterType.HERO)
+            player_character.hero_id = random.randint(0, 2)
             print(
-                f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y}')
+                f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)
 
     def transfer_data_to_players(self, data):
@@ -47,16 +48,16 @@ class ActiveRoundHandler:
     def update(self, delta):
         for i in self.active_round.player_characters:
             if i.movement[0]:
-                i.x -= 10 * delta
+                i.x -= 30 * delta
             elif i.movement[1]:
-                i.x += 10 * delta
+                i.x += 30 * delta
 
             if i.movement[2]:
-                i.y -= 10 * delta
+                i.y -= 30 * delta
             elif i.movement[3]:
-                i.y += 10 * delta
+                i.y += 30 * delta
 
-            if x < 0:
+            if i.x < 0:
                 i.x = 960 - 150
             elif i.x > 960 - 150:
                 i.x = 0
@@ -76,10 +77,10 @@ class ActiveRoundHandler:
                 print('[INFO] Eine Runde wurde abgebrochen.')
                 return
 
-            time.sleep(1/30)
+            time.sleep(1/10)
 
             last_update_length = time.time() - last_update
-            delta = last_update_length / (1/30)
+            delta = last_update_length / (1/10)
             print(delta)
             self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))

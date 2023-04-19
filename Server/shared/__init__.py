@@ -49,7 +49,10 @@ class DataHandler:
 
         for i in range(len(player_character_list)):
             p = player_character_list[i]
-            data += ';' + str(i) + ';' + p.username + ';' + str(p.x) + ';' + str(p.y)
+            data += ';' + str(i) + ';' + p.username + ';' + str(p.x) + ';' + str(p.y) + ';' + str(p.character_type)
+
+            if p.character_type == PlayerCharacter.CharacterType.HERO:
+                data += ';' + str(p.hero_id)
 
         print('Tranfer', data)
         return data.encode()

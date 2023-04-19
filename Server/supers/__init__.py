@@ -20,10 +20,17 @@ class UserConnectionLink:
 
 
 class PlayerCharacter:
-    def __init__(self, username, x, y):
+
+    class CharacterType:
+        HERO = 0
+        HUNTER = 1
+
+    def __init__(self, username, x, y, character_type):
         self.username = username
         self.x = x
         self.y = y
+        self.hero_id = 0
+        self.character_type = character_type
         self.movement = [0, 0, 0, 0]
 
 class Round:

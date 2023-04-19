@@ -33,6 +33,7 @@ class HandlerGlobals:
     LOGIN_HANDLER = backend.handler.LoginHandler()
     INGAME_ENTITY_HANDLER = backend.handler.IngameEntityHandler()
     MOVEMENT_HANDLER = backend.handler.MovementHandler()
+    HERO_HANDLER = backend.handler.HeroHandler()
 
 
 class ControllerGlobals:
