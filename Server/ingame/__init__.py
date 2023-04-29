@@ -48,14 +48,14 @@ class ActiveRoundHandler:
     def update(self, delta):
         for i in self.active_round.player_characters:
             if i.movement[0]:
-                i.x -= 30 * delta
+                i.x -= 5 * delta
             elif i.movement[1]:
-                i.x += 30 * delta
+                i.x += 5 * delta
 
             if i.movement[2]:
-                i.y -= 30 * delta
+                i.y -= 5 * delta
             elif i.movement[3]:
-                i.y += 30 * delta
+                i.y += 5 * delta
 
             if i.x < 0:
                 i.x = 960 - 150
@@ -77,10 +77,10 @@ class ActiveRoundHandler:
                 print('[INFO] Eine Runde wurde abgebrochen.')
                 return
 
-            time.sleep(1/10)
+            time.sleep(1/60)
 
             last_update_length = time.time() - last_update
-            delta = last_update_length / (1/10)
+            delta = last_update_length / (1/60)
             print(delta)
             self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))
