@@ -3,7 +3,7 @@ from socket import socket
 import pygame.event
 
 import backend.shared
-from backend.heroes import Rageo, Digla, Vaaslen
+from backend.entities import Rageo, Digla, Vaaslen
 from backend.supers import Character
 
 

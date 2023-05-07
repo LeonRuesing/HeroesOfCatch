@@ -8,7 +8,16 @@ from foundation import pygame
 from backend.shared import ProjectGlobals
 from backend.shared import HandlerGlobals
 
+
+class HeroSelection:
+    def __init__(self, path):
+        self.hero_img = ProjectGlobals.load_image(path)
+        self.background = ProjectGlobals.load_image("hero_select_hero_bg")
+        self.selected_background = ProjectGlobals.load_image("hero_select_hero_selected_bg")
+        self.selected = False
+
 class LobbyScreen:
+
     def __init__(self):
         self.background = ProjectGlobals.load_image("lobby_background")
 
@@ -25,6 +34,16 @@ class LobbyScreen:
         self.profile_level_rect.centery = self.profile_rect.centery
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 22)
+
+        self.hero_select = True
+        self.hero_select_bg = ProjectGlobals.load_image("hero_select_bg")
+        self.hero_select_hero_bg = ProjectGlobals.load_image("hero_select_hero_bg")
+
+
+        # TODO: Starke Cleanup-Baustelle!
+        self.heroes = [HeroSelection("/heroes/digla/idle/idle_0"), HeroSelection("/heroes/rageo/idle"),
+                       HeroSelection("/heroes/vaaslen/idle")]
+
         pass
 
     def draw(self, screen, dt):
@@ -46,6 +65,13 @@ class LobbyScreen:
 
         screen.blit(basic_surface, text_rect)
 
+        if self.hero_select:
+            rect = self.hero_select_bg.get_rect()
+            rect.center = ProjectGlobals.SCREEN_RECT.center
+
+            # Background
+            screen.blit(self.hero_select_bg, rect)
+
     def update(self, dt):
         pass
 
@@ -58,7 +84,7 @@ class IngameScreen:
         screen.blit(self.background, (0, 0))
 
         for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
-            #screen.blit(self.heroes[i.hero_id], (i.x, i.y))
+            # screen.blit(self.entities[i.hero_id], (i.x, i.y))
             i.draw(screen)
             i.update(dt)
 

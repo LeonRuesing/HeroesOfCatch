@@ -17,13 +17,17 @@ class Character:
         self.interpolation_y = 0
         self.interpolation_speed = 5
 
+        self.direction = 0
+
     def update(self, dt):
         distance_x = self.x - self.interpolation_x
 
         if distance_x > 0:
             self.interpolation_x += self.interpolation_speed * dt
+            self.direction = 0
         elif distance_x < 0:
             self.interpolation_x -= self.interpolation_speed * dt
+            self.direction = 1
 
         distance_y = self.y - self.interpolation_y
 

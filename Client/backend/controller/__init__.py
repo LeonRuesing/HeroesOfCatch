@@ -4,7 +4,7 @@ import random
 import backend.supers
 import backend.shared
 from backend.handler import HeroHandler
-from backend.heroes import Rageo, Digla, Vaaslen
+from backend.entities import Rageo, Digla, Vaaslen, Bob
 from backend.shared import PacketListener, HandlerGlobals
 
 
@@ -72,7 +72,7 @@ class IngameScreenController(PacketListener):
                     hero.x = x
                     hero.y = y
                     hero.sync_pos_with_server()
-                    #hero.__class__ = type(HandlerGlobals.HERO_HANDLER.heroes[hero_id])
+                    #hero.__class__ = type(HandlerGlobals.HERO_HANDLER.entities[hero_id])
                     if hero_id == 0:
                         hero = Rageo(id, username)
                     elif hero_id == 1:
@@ -84,6 +84,16 @@ class IngameScreenController(PacketListener):
 
                     if hero.username == backend.shared.HandlerGlobals.LOGIN_HANDLER.username:
                         backend.shared.HandlerGlobals.MOVEMENT_HANDLER.set_player(hero)
+                else:
+                    hunter = Bob(id, username)
+                    hunter.x = x
+                    hunter.y = y
+                    hunter.sync_pos_with_server()
+
+                    HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hunter)
+
+                    if hunter.username == backend.shared.HandlerGlobals.LOGIN_HANDLER.username:
+                        backend.shared.HandlerGlobals.MOVEMENT_HANDLER.set_player(hunter)
 
         elif packet_id == 3:
             index = 1

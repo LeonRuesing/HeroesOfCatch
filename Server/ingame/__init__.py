@@ -22,9 +22,17 @@ class ActiveRoundHandler:
         self.start_game_loop()
 
     def create_characters(self):
-        for i in self.active_round.round.users:
-            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300), PlayerCharacter.CharacterType.HERO)
-            player_character.hero_id = random.randint(0, 2)
+        hunter_player = random.randint(0, len(self.active_round.round.users) - 1)
+        for i in range(len(self.active_round.round.users)):
+            character_type = PlayerCharacter.CharacterType.HERO
+
+            if hunter_player == i:
+                character_type = PlayerCharacter.CharacterType.HUNTER
+
+            i = self.active_round.round.users[i]
+            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300), character_type)
+            #player_character.hero_id = random.randint(0, 2)
+            player_character.hero_id = 1
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)
@@ -47,24 +55,29 @@ class ActiveRoundHandler:
 
     def update(self, delta):
         for i in self.active_round.player_characters:
+
+            speed = 5
+            if i.character_type == PlayerCharacter.CharacterType.HUNTER:
+                speed = 5.2
+
             if i.movement[0]:
-                i.x -= 5 * delta
+                i.x -= speed * delta
             elif i.movement[1]:
-                i.x += 5 * delta
+                i.x += speed * delta
 
             if i.movement[2]:
-                i.y -= 5 * delta
+                i.y -= speed * delta
             elif i.movement[3]:
-                i.y += 5 * delta
+                i.y += speed * delta
 
             if i.x < 0:
-                i.x = 960 - 150
-            elif i.x > 960 - 150:
+                i.x = 960
+            elif i.x > 960:
                 i.x = 0
 
             if i.y < 0:
-                i.y = 540 - 200
-            elif i.y > 540 - 200:
+                i.y = 540
+            elif i.y > 540:
                 i.y = 0
 
     def game_loop(self):
