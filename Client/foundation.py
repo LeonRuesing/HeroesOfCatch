@@ -36,7 +36,6 @@ class Game:
         self.running = True  # Flagvariable
 
     def run(self):
-        last_time = time.time()
         try:
             while self.running:  # Hauptprogrammschleife
                 delta = self.clock.tick(backend.shared.ProjectGlobals.FPS) / (1000 / backend.shared.ProjectGlobals.FPS)  # Auf mind. 1/60s takten
@@ -56,18 +55,18 @@ class Game:
                 self.running = False
             elif event.type == pygame.MOUSEMOTION:
                 # self.button_handler.update_button_hover(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                backend.shared.HandlerGlobals.BUTTON_HANDLER.update_hover(pygame.mouse.get_pos())
                 pass
             elif event.type == pygame.MOUSEBUTTONUP:
                 if backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen == 0:
                     self.connecting.set_to_default()
-                else:
-                    backend.shared.HandlerGlobals.SERVER_CONNECTION.stop()
-                    backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
                 pass
             elif event.type == pygame.KEYUP:
-                backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
+                if backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen == 2:
+                    backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
             elif event.type == pygame.KEYDOWN:
-                backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 1)
+                if backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen == 2:
+                    backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 1)
 
     def get_current_screen(self) -> object:
         screen_id = backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen
@@ -86,7 +85,7 @@ class Game:
         self.get_current_screen().draw(self.screen, dt)
 
         # Credits
-        text = "HeroesOfCatch v.1.0 von Leon Rüsing | " + str(round(self.clock.get_fps(), 2)) + " FPS"
+        text = "HeroesOfCatch v.1.0 von Leon Rüsing | " + str(round(self.clock.get_fps())) + " FPS"
         basic_surface = self.font.render(text, True, (255, 255, 255))
 
         text_rect = basic_surface.get_rect()

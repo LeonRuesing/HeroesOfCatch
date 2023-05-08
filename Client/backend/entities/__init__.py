@@ -63,7 +63,10 @@ class Rageo(Hero):
         super().update(dt)
 
     def draw(self, screen: pygame.Surface):
-        screen.blit(self.idle_texture, (self.interpolation_x, self.interpolation_y))
+        texture = self.idle_texture
+        if self.direction == 1:
+            texture = pygame.transform.flip(texture, True, False)
+        screen.blit(texture, (self.interpolation_x + texture.get_width() / 2, self.interpolation_y + texture.get_height() / 2))
 
 
 class Digla(Hero):
@@ -122,4 +125,8 @@ class Vaaslen(Hero):
         super().update(dt)
 
     def draw(self, screen: pygame.Surface):
-        screen.blit(self.idle_texture, (self.interpolation_x, self.interpolation_y))
+        texture = self.idle_texture
+        if self.direction == 1:
+            texture = pygame.transform.flip(texture, True, False)
+
+        screen.blit(texture, (self.interpolation_x + texture.get_width() / 2, self.interpolation_y + texture.get_height() / 2))

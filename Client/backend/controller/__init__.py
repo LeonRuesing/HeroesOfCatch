@@ -48,6 +48,7 @@ class IngameScreenController(PacketListener):
         #print('packet_id', packet_id)
         if packet_id == 2:
             print("Transfer= " + str(data))
+            HandlerGlobals.INGAME_ENTITY_HANDLER.entities.clear()
             HandlerGlobals.SCREEN_HANDLER.current_screen = 2
             index = 1
 

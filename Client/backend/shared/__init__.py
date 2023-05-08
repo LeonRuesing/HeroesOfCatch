@@ -30,6 +30,7 @@ class HandlerGlobals:
 
     import backend.handler
     SCREEN_HANDLER = backend.handler.ScreenHandler()
+    BUTTON_HANDLER = backend.handler.ButtonHandler()
     LOGIN_HANDLER = backend.handler.LoginHandler()
     INGAME_ENTITY_HANDLER = backend.handler.IngameEntityHandler()
     MOVEMENT_HANDLER = backend.handler.MovementHandler()
