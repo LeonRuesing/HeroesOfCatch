@@ -23,13 +23,13 @@ class LobbyScreen:
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 22)
 
-        texture = ProjectGlobals.load_image("button_play")
+        texture = ProjectGlobals.load_image("button_green")
         self.play_button_rect = texture.get_rect()
         self.play_button_rect.top = 170
         self.play_button_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
         self.play_button = TextButton(texture, self.play_button_rect, "Spielen")
 
-        texture = ProjectGlobals.load_image("button_change_hero")
+        texture = ProjectGlobals.load_image("button_orange")
         self.change_hero_button_rect = texture.get_rect()
         self.change_hero_button_rect.centerx = ProjectGlobals.SCREEN_RECT.centerx
         self.change_hero_button_rect.top = self.play_button_rect.bottom + 10

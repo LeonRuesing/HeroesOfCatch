@@ -86,3 +86,16 @@ class DataHandler:
         data += ';' + str(present_players)
 
         return data.encode()
+
+    @staticmethod
+    def get_freeze_hunter(hunter: PlayerCharacter):
+        data = f'{7}'
+        data += ';' + str(hunter.effective_speed)
+
+        return data.encode()
+
+    @staticmethod
+    def get_effect_clear(character: PlayerCharacter):
+        data = f'{8};{character.hero_id }'
+
+        return data.encode()

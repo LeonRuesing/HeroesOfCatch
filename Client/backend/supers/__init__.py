@@ -1,4 +1,17 @@
 import pygame
+import time
+
+from backend.shared import ProjectGlobals
+
+
+class Ability:
+    def __init__(self, texture: pygame.Surface, use_time: float):
+        self.texture = texture
+        self.time = use_time
+
+        self.last_used = time.time_ns()
+
+        self.available = False
 
 
 class Character:
@@ -18,6 +31,8 @@ class Character:
         self.interpolation_speed = 5
 
         self.direction = 0
+
+        self.ability = None
 
     def update(self, dt):
         distance_x = self.x - self.interpolation_x
@@ -63,5 +78,26 @@ class Hero(Character):
 
 
 class Hunter(Character):
+
+    FREEZE_IMAGES = []
+
     def __init__(self, id: int, username):
         super().__init__(id, username)
+
+        for i in range(36):
+            texture = ProjectGlobals.load_image(f"/effects/freeze/ice_ani_{i}")
+            Hunter.FREEZE_IMAGES.append(texture)
+
+        self.freeze_index = 0
+        self.freeze = False
+
+    def draw(self, screen: pygame.Surface):
+        if self.freeze:
+            screen.blit(Hunter.FREEZE_IMAGES[self.freeze_index], (self.interpolation_x, self.interpolation_y - 50))
+
+    def update(self, dt):
+        super().update(dt)
+        if self.freeze:
+            self.freeze_index += 1
+            if self.freeze_index >= len(Hunter.FREEZE_IMAGES):
+                self.freeze_index = 0

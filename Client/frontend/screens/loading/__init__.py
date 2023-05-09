@@ -57,8 +57,6 @@ class LoadingScreen:
         self.background = pygame.transform.scale(ProjectGlobals.load_image("lobby_background"),
                                                  ProjectGlobals.SCREEN_RECT.size)
         self.error_icon = ProjectGlobals.load_image("error_icon")
-        self.stateTextBackground = ProjectGlobals.load_image("lobby_state_text_background")
-        self.stateTextBackground = pygame.transform.scale(self.stateTextBackground, (500, 100))
 
         self.error_active = False
         self.error_message = None

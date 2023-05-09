@@ -1,9 +1,10 @@
+import time
 from socket import socket
 
 import pygame.event
 
 import backend.shared
-from backend.entities import Rageo, Digla, Vaaslen
+from backend.entities import Rageo, Digla, Vaaslen, Bob
 from backend.supers import Character
 from frontend.supers import TextButton
 
@@ -54,17 +55,20 @@ class IngameEntityHandler:
 
 class HeroHandler:
     def __init__(self):
-        self.heroes = {"0": Rageo, "1": Digla, "2": Vaaslen}
+        self.heroes = {"0": Digla, "1": Vaaslen}
 
 
 class MovementHandler:
     def __init__(self):
         self.movement = [0, 0, 0, 0]  # LEFT, RIGHT, TOP, BOTTOM
 
-        self.__player_hero = None
+        self.__player_hero: Character = None
 
     def set_player(self, player_hero: Character):
         self.__player_hero = player_hero
+
+    def get_player(self) -> Character:
+        return self.__player_hero
 
     def check_keyboard_input(self, event: pygame.event.Event, active):
         key = event.key
@@ -81,6 +85,13 @@ class MovementHandler:
         if key == pygame.K_DOWN or key == pygame.K_s:
             self.movement[3] = active
 
+        # Ability
+        if key == pygame.K_SPACE:
+            if self.__player_hero is not None:
+                if self.__player_hero.ability.available:
+                    self.__player_hero.ability.last_used = time.time_ns()
+                    self.send_ability()
+
         self.send_update()
 
     # TODO: Game crash after disconnect
@@ -89,3 +100,8 @@ class MovementHandler:
             print(f'{self.movement[0]}')
             backend.shared.HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(
                 f'2;{self.movement[0]};{self.movement[1]};{self.movement[2]};{self.movement[3]}'.encode())
+
+    @staticmethod
+    def send_ability():
+        if backend.shared.HandlerGlobals.SERVER_CONNECTION.connected:
+            backend.shared.HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('5'.encode())

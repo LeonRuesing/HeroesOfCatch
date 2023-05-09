@@ -4,7 +4,7 @@ from supers import UserConnectionLink, Round, ActiveRound
 
 class MatchmakingHandler:
     WAITING_PLAYERS = list[UserConnectionLink]()
-    NEEDED_PLAYERS = 4
+    NEEDED_PLAYERS = 2
 
     @staticmethod
     def add_player(user: UserConnectionLink):
