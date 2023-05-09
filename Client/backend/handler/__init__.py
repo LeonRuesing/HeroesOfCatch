@@ -3,18 +3,42 @@ from socket import socket
 import pygame.event
 
 import backend.shared
-from backend.heroes import Rageo, Digla, Vaaslen
+from backend.entities import Rageo, Digla, Vaaslen
 from backend.supers import Character
+from frontend.supers import TextButton
 
 
 class ScreenHandler:
     def __init__(self):
-        self.current_screen = 0
+        self.__current_screen = 0
+
+    def set_screen(self, screen_id):
+        self.__current_screen = screen_id
+
+    def get_screen(self):
+        return self.__current_screen
 
 
 class LoginHandler:
     def __init__(self):
         self.username = None
+
+
+class ButtonHandler:
+    def __init__(self):
+        self.active_buttons = list[TextButton]()
+
+    def update_hover(self, pos: tuple[int, int]):
+        for i in self.active_buttons:
+            if i.rect.collidepoint(pos):
+                i.hover = True
+            else:
+                i.hover = False
+
+    def update_press(self):
+        for i in self.active_buttons:
+            if i.hover:
+                i.pressed = True
 
 
 class IngameEntityHandler:

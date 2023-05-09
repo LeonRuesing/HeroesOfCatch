@@ -4,7 +4,7 @@ import random
 import backend.supers
 import backend.shared
 from backend.handler import HeroHandler
-from backend.heroes import Rageo, Digla, Vaaslen
+from backend.entities import Rageo, Digla, Vaaslen, Bob
 from backend.shared import PacketListener, HandlerGlobals
 
 
@@ -21,7 +21,7 @@ class LoadingScreenController(PacketListener):
                 return
 
             threading.Thread(target=HandlerGlobals.SERVER_CONNECTION.listen).start()
-            #HandlerGlobals.SERVER_CONNECTION.listen()
+            # HandlerGlobals.SERVER_CONNECTION.listen()
         except:
             print('connection error')
 
@@ -35,9 +35,37 @@ class LoadingScreenController(PacketListener):
             print(f"Anmelden mit {username}")
             print(packet_id)
         elif packet_id == 1:
-            HandlerGlobals.SCREEN_HANDLER.current_screen = 1
+            HandlerGlobals.SCREEN_HANDLER.set_screen(1)
             backend.shared.HandlerGlobals.LOGIN_HANDLER.username = data[1]
             print("Angemeldet mit: " + data[1])
+
+
+class MatchmakingController(PacketListener):
+    def __init__(self):
+        HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
+
+        self.present_players = 0
+        self.needed_players = 0
+
+    def on_packet_reveived(self, packet_id: int, data: list[str]):
+        # Enter matchmaking
+        if packet_id == 4:
+            self.needed_players = int(data[1])
+            HandlerGlobals.SCREEN_HANDLER.set_screen(3)
+        elif packet_id == 5:
+            HandlerGlobals.SCREEN_HANDLER.set_screen(1)
+        elif packet_id == 6:
+            self.present_players = int(data[1])
+
+    @staticmethod
+    def send_matchmaking_request():
+        if HandlerGlobals.SERVER_CONNECTION.connected:
+            HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('3'.encode())
+
+    @staticmethod
+    def send_queue_cancel():
+        if HandlerGlobals.SERVER_CONNECTION.connected:
+            HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('4'.encode())
 
 
 class IngameScreenController(PacketListener):
@@ -45,10 +73,11 @@ class IngameScreenController(PacketListener):
         HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
 
     def on_packet_reveived(self, packet_id: int, data: str):
-        #print('packet_id', packet_id)
+        # print('packet_id', packet_id)
         if packet_id == 2:
             print("Transfer= " + str(data))
-            HandlerGlobals.SCREEN_HANDLER.current_screen = 2
+            HandlerGlobals.INGAME_ENTITY_HANDLER.entities.clear()
+            HandlerGlobals.SCREEN_HANDLER.set_screen(2)
             index = 1
 
             while index + 4 <= len(data):
@@ -72,7 +101,7 @@ class IngameScreenController(PacketListener):
                     hero.x = x
                     hero.y = y
                     hero.sync_pos_with_server()
-                    #hero.__class__ = type(HandlerGlobals.HERO_HANDLER.heroes[hero_id])
+                    # hero.__class__ = type(HandlerGlobals.HERO_HANDLER.entities[hero_id])
                     if hero_id == 0:
                         hero = Rageo(id, username)
                     elif hero_id == 1:
@@ -84,6 +113,16 @@ class IngameScreenController(PacketListener):
 
                     if hero.username == backend.shared.HandlerGlobals.LOGIN_HANDLER.username:
                         backend.shared.HandlerGlobals.MOVEMENT_HANDLER.set_player(hero)
+                else:
+                    hunter = Bob(id, username)
+                    hunter.x = x
+                    hunter.y = y
+                    hunter.sync_pos_with_server()
+
+                    HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hunter)
+
+                    if hunter.username == backend.shared.HandlerGlobals.LOGIN_HANDLER.username:
+                        backend.shared.HandlerGlobals.MOVEMENT_HANDLER.set_player(hunter)
 
         elif packet_id == 3:
             index = 1

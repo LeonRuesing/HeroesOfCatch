@@ -10,6 +10,7 @@ import os
 class ProjectGlobals:
     SCREEN_RECT = pygame.rect.Rect(0, 0, 800, 800)
     FPS = 60
+    RUNNING = False
 
     IP = "localhost"
     PORT = 56021
@@ -30,6 +31,7 @@ class HandlerGlobals:
 
     import backend.handler
     SCREEN_HANDLER = backend.handler.ScreenHandler()
+    BUTTON_HANDLER = backend.handler.ButtonHandler()
     LOGIN_HANDLER = backend.handler.LoginHandler()
     INGAME_ENTITY_HANDLER = backend.handler.IngameEntityHandler()
     MOVEMENT_HANDLER = backend.handler.MovementHandler()
@@ -39,4 +41,5 @@ class HandlerGlobals:
 class ControllerGlobals:
     import backend.controller
     LOADING_SCREEN_CONTROLLER = backend.controller.LoadingScreenController()
+    MATCHMAKING_CONTROLLER = backend.controller.MatchmakingController()
     INGAME_SCREEN_CONTROLLER = backend.controller.IngameScreenController()

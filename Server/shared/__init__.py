@@ -9,13 +9,13 @@ class ServerGlobals:
     ACTIVE_ROUNDS = list[ActiveRound]()
 
     @staticmethod
-    def get_connection_link_by_socket(client_connection: ClientConnection) -> UserConnectionLink:
+    def get_connection_link_by_cc(client_connection: ClientConnection) -> UserConnectionLink:
         for i in ServerGlobals.CONNECTION_LINKS:
             if i.socket == client_connection.socket:
                 return i
 
     @staticmethod
-    def get_username_by_socket(socket: socket.socket) -> UserConnectionLink:
+    def get_client_connection_by_socket(socket: socket.socket) -> UserConnectionLink:
         for i in ServerGlobals.CONNECTION_LINKS:
             if i.socket == socket:
                 return i
@@ -26,6 +26,7 @@ class ServerGlobals:
             if i.user_present(username):
                 return i
         return None
+
 
 class DataHandler:
     def __init__(self):
@@ -64,5 +65,24 @@ class DataHandler:
         for i in range(len(player_character_list)):
             p = player_character_list[i]
             data += ';' + str(i) + ';' + str(p.x) + ';' + str(p.y)
+
+        return data.encode()
+
+    @staticmethod
+    def get_queue_enter(needed_players: int):
+        data = f'{4}'
+        data += ';' + str(needed_players)
+
+        return data.encode()
+
+    @staticmethod
+    def get_queue_leave():
+        data = f'{5}'
+        return data.encode()
+
+    @staticmethod
+    def get_queue_update(present_players: int):
+        data = f'{6}'
+        data += ';' + str(present_players)
 
         return data.encode()
