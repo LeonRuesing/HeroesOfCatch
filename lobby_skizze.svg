@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="Zeichnung.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.33071229"
+     inkscape:cx="1511.8882"
+     inkscape:cy="411.23358"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4106">
+      <stop
+         style="stop-color:#5aedff;stop-opacity:1;"
+         offset="0"
+         id="stop4102" />
+      <stop
+         style="stop-color:#2919ff;stop-opacity:1;"
+         offset="1"
+         id="stop4104" />
+    </linearGradient>
+    <rect
+       x="931.15681"
+       y="160.89449"
+       width="86.594376"
+       height="71.092913"
+       id="rect3972" />
+    <rect
+       x="962.15973"
+       y="144.32396"
+       width="259.78313"
+       height="87.663442"
+       id="rect1860" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4106"
+       id="radialGradient4108"
+       cx="252.52927"
+       cy="48.106422"
+       fx="252.52927"
+       fy="48.106422"
+       r="9.9935088"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#3d35ff;stroke:#f90000;stroke-width:0"
+       id="rect234"
+       width="294.74109"
+       height="165.75429"
+       x="234.77144"
+       y="31.114281"
+       inkscape:export-filename="lobby_background.png"
+       inkscape:export-xdpi="165.46033"
+       inkscape:export-ydpi="165.46033" />
+    <path
+       id="rect344"
+       style="fill:#0900e4;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       d="M 288.9927,31.114366 234.7712,80.45304 v 86.4802 L 384.03289,31.114372 Z" />
+    <path
+       id="rect957"
+       style="fill:#0900e4;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       d="M 529.51238,81.140499 402.32996,196.8686 l 68.80304,1e-5 58.37938,-53.12161 z" />
+    <rect
+       style="fill:#002a8e;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect1023"
+       width="93.866615"
+       height="26.853352"
+       x="238.01144"
+       y="34.231182"
+       rx="5.8702726"
+       ry="5.8702726" />
+    <rect
+       style="fill:#002a8e;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect1023-8"
+       width="27.063208"
+       height="26.853352"
+       x="497.49448"
+       y="34.575771"
+       rx="5.0217023"
+       ry="5.0217023" />
+    <rect
+       style="fill:#0033ab;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect1023-3"
+       width="79.033272"
+       height="8.1494541"
+       x="245.80591"
+       y="49.383633"
+       rx="3.5208225"
+       ry="2.6954701" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.70351317,0,0,0.70351317,-410.16491,-57.757541)"
+       id="text1858"
+       style="white-space:pre;shape-inside:url(#rect1860);fill:#ffffff;fill-opacity:1;stroke:#f90000;stroke-width:0"><tspan
+         x="962.16016"
+         y="155.13327"
+         id="tspan5047"><tspan
+           style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+           id="tspan5045">Username</tspan></tspan></text>
+    <circle
+       style="fill:url(#radialGradient4108);fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="path2020"
+       cx="252.52927"
+       cy="48.106422"
+       r="9.9935083" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.85584254,0,0,0.85584254,-550.0663,-94.831683)"
+       id="text3970"
+       style="white-space:pre;shape-inside:url(#rect3972);fill:#ffffff;fill-opacity:1;stroke:#f90000;stroke-width:0"><tspan
+         x="931.15625"
+         y="171.70358"
+         id="tspan5051"><tspan
+           style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+           id="tspan5049">99</tspan></tspan></text>
+    <rect
+       style="fill:#727272;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect4238"
+       width="6.0003061"
+       height="6.0003061"
+       x="508.17593"
+       y="38.826981"
+       rx="1.0214977"
+       ry="1.0214977" />
+    <rect
+       style="fill:#727272;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect4238-9"
+       width="6.0003061"
+       height="6.0003061"
+       x="393.17007"
+       y="-337.36725"
+       rx="1.0214977"
+       ry="1.0214977"
+       transform="rotate(45)" />
+    <rect
+       style="fill:#727272;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect4238-0"
+       width="6.0003061"
+       height="6.0003061"
+       x="-514.5614"
+       y="-57.250233"
+       rx="1.0214977"
+       ry="1.0214977"
+       transform="scale(-1)" />
+    <rect
+       style="fill:#727272;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="rect4238-9-5"
+       width="6.0003061"
+       height="6.0003061"
+       x="-397.95129"
+       y="317.8804"
+       rx="1.0214977"
+       ry="1.0214977"
+       transform="rotate(-135)" />
+    <circle
+       style="fill:#969696;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="path4184"
+       cx="511.55759"
+       cy="48.470367"
+       r="5.9253025" />
+    <circle
+       style="fill:#a6a6a6;fill-opacity:1;stroke:#f90000;stroke-width:0"
+       id="circle5016"
+       cx="511.6601"
+       cy="48.564304"
+       r="3.8392313" />
+  </g>
+</svg>
