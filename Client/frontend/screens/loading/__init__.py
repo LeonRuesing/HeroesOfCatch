@@ -54,7 +54,7 @@ class LoadingScreen:
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
         self.headline_font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
-        self.background = pygame.transform.scale(ProjectGlobals.load_image("loading_background"),
+        self.background = pygame.transform.scale(ProjectGlobals.load_image("lobby_background"),
                                                  ProjectGlobals.SCREEN_RECT.size)
         self.error_icon = ProjectGlobals.load_image("error_icon")
         self.stateTextBackground = ProjectGlobals.load_image("lobby_state_text_background")
@@ -117,3 +117,6 @@ class LoadingScreen:
             text_rect.centery = ProjectGlobals.SCREEN_RECT.centery + 70
 
             screen.blit(basic_surface, text_rect)
+
+    def show(self):
+        pass

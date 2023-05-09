@@ -28,7 +28,7 @@ class PacketListener:
                 user = UserConnectionLink(socket, username)
 
                 ServerGlobals.CONNECTION_LINKS.append(user)
-                MatchmakingHandler.add_player(user)
+
             elif packet_id == 2:
                 round_username = ServerGlobals.get_client_connection_by_socket(socket).username
                 active_round = ServerGlobals.get_round_by_username(round_username)
@@ -40,6 +40,12 @@ class PacketListener:
 
                 movement = (left, right, top, bottom)
                 active_round.update_movement_for_user(round_username, movement)
+            elif packet_id == 3:
+                user = ServerGlobals.get_client_connection_by_socket(socket)
+                MatchmakingHandler.add_player(user)
+            elif packet_id == 4:
+                user = ServerGlobals.get_client_connection_by_socket(socket)
+                MatchmakingHandler.remove_player(user)
 
             print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {packet_id}')
 
@@ -50,7 +56,12 @@ class ConnectionHandler(DisconnectListener):
 
     def on_disconnect(self, client_connection: ClientConnection):
         print('[ConnectionHandler]', f'Verbindung abgebrochen von: {client_connection.client_ip}')
-        ServerGlobals.CONNECTION_LINKS.remove(ServerGlobals.get_connection_link_by_cc(client_connection))
+
+        user = ServerGlobals.get_connection_link_by_cc(client_connection)
+
+        MatchmakingHandler.remove_player(user)
+
+        ServerGlobals.CONNECTION_LINKS.remove(user)
         ServerGlobals.CONNECTIONS.remove(client_connection)
 
     def wait_for_incomming_connections(self):

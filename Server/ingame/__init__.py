@@ -94,7 +94,6 @@ class ActiveRoundHandler:
 
             last_update_length = time.time() - last_update
             delta = last_update_length / (1/60)
-            print(delta)
             self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))
 

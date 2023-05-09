@@ -4,17 +4,25 @@ import pygame.event
 
 import backend.shared
 from backend.entities import Rageo, Digla, Vaaslen
-from backend.supers import Character, TextButton
+from backend.supers import Character
+from frontend.supers import TextButton
 
 
 class ScreenHandler:
     def __init__(self):
-        self.current_screen = 0
+        self.__current_screen = 0
+
+    def set_screen(self, screen_id):
+        self.__current_screen = screen_id
+
+    def get_screen(self):
+        return self.__current_screen
 
 
 class LoginHandler:
     def __init__(self):
         self.username = None
+
 
 class ButtonHandler:
     def __init__(self):
@@ -31,6 +39,7 @@ class ButtonHandler:
         for i in self.active_buttons:
             if i.hover:
                 i.pressed = True
+
 
 class IngameEntityHandler:
     def __init__(self):

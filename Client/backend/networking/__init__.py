@@ -42,6 +42,7 @@ class ServerConnection:
                 raw = str(self.client_socket.recv(1024).decode())
                 data = raw.split(";")
                 packet_id = int(data[0])
+
                 self.trigger_packet_listener(packet_id, data)
                 #print("[Networking] Packet erhalten mit ID", packet_id)
 

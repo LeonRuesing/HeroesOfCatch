@@ -69,13 +69,20 @@ class DataHandler:
         return data.encode()
 
     @staticmethod
-    def get_queue_update(present_players: int, needed_players: int):
+    def get_queue_enter(needed_players: int):
         data = f'{4}'
-        data += ';' + str(present_players) + ';' + str(needed_players)
+        data += ';' + str(needed_players)
 
         return data.encode()
 
     @staticmethod
     def get_queue_leave():
         data = f'{5}'
+        return data.encode()
+
+    @staticmethod
+    def get_queue_update(present_players: int):
+        data = f'{6}'
+        data += ';' + str(present_players)
+
         return data.encode()

@@ -4,26 +4,42 @@ from supers import UserConnectionLink, Round, ActiveRound
 
 class MatchmakingHandler:
     WAITING_PLAYERS = list[UserConnectionLink]()
-    NEEDED_PLAYERS = 2
+    NEEDED_PLAYERS = 4
+
     @staticmethod
     def add_player(user: UserConnectionLink):
         if MatchmakingHandler.WAITING_PLAYERS.__contains__(user):
             return
 
         MatchmakingHandler.WAITING_PLAYERS.append(user)
-
-        DataHandler.send_to_socket(user.socket, DataHandler.get_queue_update(len(MatchmakingHandler.WAITING_PLAYERS), MatchmakingHandler.NEEDED_PLAYERS))
+        print(f'[MatchmakingHandler] {user.username} nun in Warteschlange!')
 
         if len(MatchmakingHandler.WAITING_PLAYERS) >= MatchmakingHandler.NEEDED_PLAYERS:
             MatchmakingHandler.form_new_round()
+        else:
+            DataHandler.send_to_socket(user.socket, DataHandler.get_queue_enter(MatchmakingHandler.NEEDED_PLAYERS))
+            MatchmakingHandler.send_info_to_all()
 
     @staticmethod
     def remove_player(user: UserConnectionLink):
-        if not MatchmakingHandler.WAITING_PLAYERS.__contains__(user):
+        target_user = None
+        for i in MatchmakingHandler.WAITING_PLAYERS:
+            if i.username == user.username:
+                target_user = i
+                break
+
+        if target_user is None:
             return
 
         MatchmakingHandler.WAITING_PLAYERS.remove(user)
+        MatchmakingHandler.send_info_to_all()
+        print(f'[MatchmakingHandler] {user.username} von Warteschlange entfernt!')
         DataHandler.send_to_socket(user.socket, DataHandler.get_queue_leave())
+
+    @staticmethod
+    def send_info_to_all():
+        for i in MatchmakingHandler.WAITING_PLAYERS:
+            DataHandler.send_to_socket(i.socket, DataHandler.get_queue_update(len(MatchmakingHandler.WAITING_PLAYERS)))
 
     @staticmethod
     def form_new_round():
