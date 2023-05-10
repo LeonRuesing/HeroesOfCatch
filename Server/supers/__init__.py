@@ -1,4 +1,5 @@
 import socket
+import time
 
 
 class DisconnectListener:
@@ -19,8 +20,17 @@ class UserConnectionLink:
         self.username = username
 
 
-class PlayerCharacter:
+class Effect:
+    def __init__(self, name, duration):
+        self.name = name
+        self.duration = duration
+        self.time_to_end = time.time_ns() + (duration * 1_000_000_000)
 
+    def effect_done(self) -> bool:
+        return time.time_ns() >= self.time_to_end
+
+
+class PlayerCharacter:
     class CharacterType:
         HERO = 0
         HUNTER = 1
@@ -34,11 +44,14 @@ class PlayerCharacter:
         self.movement = [0, 0, 0, 0]
         self.ability_requested = False
         self.speed = 5
+        self.hunted = False
         self.effective_speed = self.speed
-        self.end_of_effect = 0
+        self.current_effect = None
 
     def clear_effect(self):
         self.effective_speed = self.speed
+        self.current_effect = None
+
 
 class Round:
     def __init__(self):

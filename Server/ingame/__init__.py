@@ -56,6 +56,7 @@ class ActiveRoundHandler:
     def freeze_hunter(self):
         for i in self.active_round.player_characters:
             if i.character_type == PlayerCharacter.CharacterType.HUNTER:
+                i.current_effect = Effect('Freeze', 4)
                 i.effective_speed = 1.5
                 i.end_of_effect = time.time_ns() + (4 * 1_000_000_000) # 4Sec.
                 self.transfer_data_to_players(DataHandler.get_freeze_hunter(i))
@@ -65,21 +66,38 @@ class ActiveRoundHandler:
             if i.character_type == PlayerCharacter.CharacterType.HUNTER:
                 i.effective_speed = i.speed
 
+    def hunt_hero(self, character: PlayerCharacter):
+        character.hunted = True
+        self.transfer_data_to_players(DataHandler.get_hero_hunt(character, self.active_round.player_characters))
+        print(f'Hunted {character.username}')
+
     def clear_effect(self, character: PlayerCharacter):
         character.clear_effect()
-        self.transfer_data_to_players(DataHandler.get_effect_clear(character))
+        self.transfer_data_to_players(DataHandler.get_effect_clear(character, self.active_round.player_characters))
 
     def update(self, delta):
         for i in self.active_round.player_characters:
+
+            if i.hunted:
+                continue
 
             if i.ability_requested:
                 if i.character_type == PlayerCharacter.CharacterType.HERO:
                     if i.hero_id == 0:
                         self.freeze_hunter()
                         i.ability_requested = False
+                if i.character_type == PlayerCharacter.CharacterType.HUNTER:
+                    hunt_range = 50
+                    for y in self.active_round.player_characters:
+                        if y.character_type == PlayerCharacter.CharacterType.HERO and not y.hunted:
+                            if i != y:
+                                if abs(i.x - y.x) <= hunt_range and abs(i.y - y.y) <= hunt_range:
+                                    self.hunt_hero(y)
 
-            #if i.end_of_effect >= time.time():
-                #self.clear_effect(i)
+            if i.current_effect is not None:
+                if i.current_effect.effect_done():
+                    self.clear_effect(i)
+                    print('Effect cleared')
 
 
             speed = i.effective_speed

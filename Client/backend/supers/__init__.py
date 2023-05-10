@@ -28,10 +28,12 @@ class Character:
 
         self.interpolation_x = 0
         self.interpolation_y = 0
-        self.interpolation_speed = 5
+        self.orig_interpolation_speed = 5
+        self.interpolation_speed = self.orig_interpolation_speed
 
         self.direction = 0
 
+        self.hunted = False
         self.ability = None
 
     def update(self, dt):

@@ -95,7 +95,25 @@ class DataHandler:
         return data.encode()
 
     @staticmethod
-    def get_effect_clear(character: PlayerCharacter):
-        data = f'{8};{character.hero_id }'
+    def get_effect_clear(character: PlayerCharacter, character_list: list[PlayerCharacter]):
+        id = 0
+        for i in range(len(character_list)):
+            if character_list[i].username == character.username:
+                id = i
+                break
+
+        data = f'{8};{id}'
+
+        return data.encode()
+
+    @staticmethod
+    def get_hero_hunt(character: PlayerCharacter, character_list: list[PlayerCharacter]):
+        id = 0
+        for i in range(len(character_list)):
+            if character_list[i].username == character.username:
+                id = i
+                break
+
+        data = f'{9};{id}'
 
         return data.encode()

@@ -147,3 +147,17 @@ class IngameScreenController(PacketListener):
                     i.freeze = True
                     i.interpolation_speed = effective_speed
                     print('Freezed')
+        elif packet_id == 8:
+            id = int(data[1])
+            entity = HandlerGlobals.INGAME_ENTITY_HANDLER.get_entity_by_id(id)
+            if entity is not None:
+                entity.interpolation_speed = entity.orig_interpolation_speed
+
+                if type(entity) == Bob:
+                    entity.freeze = False
+        elif packet_id == 9:
+            id = int(data[1])
+            entity = HandlerGlobals.INGAME_ENTITY_HANDLER.get_entity_by_id(id)
+            if entity is not None:
+                entity.hunted = True
+

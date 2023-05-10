@@ -80,8 +80,9 @@ class IngameScreen:
 
         for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
             # screen.blit(self.entities[i.hero_id], (i.x, i.y))
-            i.draw(screen)
-            i.update(dt)
+            if not i.hunted:
+                i.draw(screen)
+                i.update(dt)
 
         if HandlerGlobals.MOVEMENT_HANDLER.get_player() is not None:
             ability = HandlerGlobals.MOVEMENT_HANDLER.get_player().ability
