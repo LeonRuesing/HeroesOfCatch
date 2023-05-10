@@ -32,6 +32,13 @@ class PlayerCharacter:
         self.hero_id = 0
         self.character_type = character_type
         self.movement = [0, 0, 0, 0]
+        self.ability_requested = False
+        self.speed = 5
+        self.effective_speed = self.speed
+        self.end_of_effect = 0
+
+    def clear_effect(self):
+        self.effective_speed = self.speed
 
 class Round:
     def __init__(self):
@@ -43,6 +50,12 @@ class ActiveRound:
         self.round = round
         self.running = False
         self.player_characters = list[PlayerCharacter]()
+
+    def request_ability(self, username):
+        for i in self.player_characters:
+            if i.username == username:
+                i.ability_requested = True
+                print(f'{i.username} requested Ability')
 
     def user_present(self, username):
         for i in self.round.users:

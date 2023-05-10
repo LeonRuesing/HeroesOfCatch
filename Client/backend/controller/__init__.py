@@ -103,10 +103,8 @@ class IngameScreenController(PacketListener):
                     hero.sync_pos_with_server()
                     # hero.__class__ = type(HandlerGlobals.HERO_HANDLER.entities[hero_id])
                     if hero_id == 0:
-                        hero = Rageo(id, username)
-                    elif hero_id == 1:
                         hero = Digla(id, username)
-                    elif hero_id == 2:
+                    elif hero_id == 1:
                         hero = Vaaslen(id, username)
 
                     HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
@@ -140,3 +138,12 @@ class IngameScreenController(PacketListener):
                 if hero is not None:
                     hero.x = x
                     hero.y = y
+        elif packet_id == 7:
+            print('packet 7')
+            effective_speed = float(data[1])
+            print(effective_speed)
+            for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
+                if type(i) == Bob:
+                    i.freeze = True
+                    i.interpolation_speed = effective_speed
+                    print('Freezed')

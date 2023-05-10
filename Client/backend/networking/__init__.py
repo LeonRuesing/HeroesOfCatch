@@ -55,6 +55,9 @@ class ServerConnection:
                 self.stop()
                 break
         print('End of method')
+        backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
+        self.state = "Problem bei der Datenübertragung!"
+        self.error = True
 
     def stop(self):
         self.connected = False

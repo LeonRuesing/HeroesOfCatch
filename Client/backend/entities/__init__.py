@@ -1,12 +1,15 @@
 import pygame
 
 from backend.shared import ProjectGlobals
-from backend.supers import Hero, Hunter
+from backend.supers import Hero, Hunter, Ability
 
 
 class Bob(Hunter):
     WALKING_SPRITES = []
     IDLE_SPRITES = []
+
+    FREEZE_WALKING_SPRITES = []
+    FREEZE_IDLE_SPRITES = []
 
     def __init__(self, id: int, username):
         super().__init__(id, username)
@@ -23,9 +26,21 @@ class Bob(Hunter):
             texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
             Bob.IDLE_SPRITES.append(texture)
 
+        for i in range(37):
+            texture = ProjectGlobals.load_image(f"/hunter/walking_freeze/walking_{i}")
+            texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
+            Bob.FREEZE_WALKING_SPRITES.append(texture)
+
+        for i in range(37):
+            texture = ProjectGlobals.load_image(f"/hunter/idle_freeze/idle_{i}")
+            texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
+            Bob.FREEZE_IDLE_SPRITES.append(texture)
+
         self.current_walking_index = 0
         self.current_idle_index = 0
         self.walking = False
+
+        self.ability = Ability(ProjectGlobals.load_image("/hunter/ability/kill"), 2)
 
     def update(self, dt):
         if self.walking:
@@ -42,10 +57,16 @@ class Bob(Hunter):
         super().update(dt)
 
     def draw(self, screen: pygame.Surface):
-        if self.walking:
-            texture = Bob.WALKING_SPRITES[self.current_walking_index]
+        if not self.freeze:
+            if self.walking:
+                texture = Bob.WALKING_SPRITES[self.current_walking_index]
+            else:
+                texture = Bob.IDLE_SPRITES[self.current_idle_index]
         else:
-            texture = Bob.IDLE_SPRITES[self.current_idle_index]
+            if self.walking:
+                texture = Bob.FREEZE_WALKING_SPRITES[self.current_walking_index]
+            else:
+                texture = Bob.FREEZE_IDLE_SPRITES[self.current_idle_index]
 
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
@@ -54,6 +75,9 @@ class Bob(Hunter):
                     (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
         screen.fill((255, 0, 0), (self.interpolation_x, self.interpolation_y, 2, 2))
 
+        super().draw(screen)
+
+# Hero Rageo was removed from game
 class Rageo(Hero):
     def __init__(self, id: int, username):
         super().__init__(id, username)
@@ -87,6 +111,7 @@ class Digla(Hero):
         self.current_idle_index = 0
         self.walking = False
 
+        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 5)
 
     def update(self, dt):
         if self.walking:

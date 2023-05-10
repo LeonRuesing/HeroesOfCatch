@@ -31,8 +31,8 @@ class ActiveRoundHandler:
 
             i = self.active_round.round.users[i]
             player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300), character_type)
-            #player_character.hero_id = random.randint(0, 2)
-            player_character.hero_id = 1
+            #player_character.hero_id = random.randint(0, 1)
+            player_character.hero_id = 0
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)
@@ -53,12 +53,36 @@ class ActiveRoundHandler:
         self.running = True
         threading.Thread(target=self.game_loop).start()
 
+    def freeze_hunter(self):
+        for i in self.active_round.player_characters:
+            if i.character_type == PlayerCharacter.CharacterType.HUNTER:
+                i.effective_speed = 1.5
+                i.end_of_effect = time.time_ns() + (4 * 1_000_000_000) # 4Sec.
+                self.transfer_data_to_players(DataHandler.get_freeze_hunter(i))
+
+    def unfreeze_hunter(self):
+        for i in self.active_round.player_characters:
+            if i.character_type == PlayerCharacter.CharacterType.HUNTER:
+                i.effective_speed = i.speed
+
+    def clear_effect(self, character: PlayerCharacter):
+        character.clear_effect()
+        self.transfer_data_to_players(DataHandler.get_effect_clear(character))
+
     def update(self, delta):
         for i in self.active_round.player_characters:
 
-            speed = 5
-            if i.character_type == PlayerCharacter.CharacterType.HUNTER:
-                speed = 5.2
+            if i.ability_requested:
+                if i.character_type == PlayerCharacter.CharacterType.HERO:
+                    if i.hero_id == 0:
+                        self.freeze_hunter()
+                        i.ability_requested = False
+
+            #if i.end_of_effect >= time.time():
+                #self.clear_effect(i)
+
+
+            speed = i.effective_speed
 
             if i.movement[0]:
                 i.x -= speed * delta

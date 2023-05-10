@@ -46,6 +46,12 @@ class PacketListener:
             elif packet_id == 4:
                 user = ServerGlobals.get_client_connection_by_socket(socket)
                 MatchmakingHandler.remove_player(user)
+            elif packet_id == 5:
+                round_username = ServerGlobals.get_client_connection_by_socket(socket).username
+                active_round = ServerGlobals.get_round_by_username(round_username)
+                active_round.request_ability(round_username)
+
+
 
             print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {packet_id}')
 
