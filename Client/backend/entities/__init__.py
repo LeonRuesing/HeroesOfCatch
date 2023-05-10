@@ -111,7 +111,7 @@ class Digla(Hero):
         self.current_idle_index = 0
         self.walking = False
 
-        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 5)
+        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 12)
 
     def update(self, dt):
         if self.walking:
@@ -145,6 +145,8 @@ class Vaaslen(Hero):
     def __init__(self, id: int, username):
         super().__init__(id, username)
         self.idle_texture = ProjectGlobals.load_image("/heroes/vaaslen/idle")
+
+        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/vaaslen/ability/shield"), 15)
 
     def update(self, dt):
         super().update(dt)

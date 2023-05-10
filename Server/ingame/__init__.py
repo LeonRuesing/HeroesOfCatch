@@ -93,6 +93,7 @@ class ActiveRoundHandler:
                             if i != y:
                                 if abs(i.x - y.x) <= hunt_range and abs(i.y - y.y) <= hunt_range:
                                     self.hunt_hero(y)
+                    i.ability_requested = False
 
             if i.current_effect is not None:
                 if i.current_effect.effect_done():
