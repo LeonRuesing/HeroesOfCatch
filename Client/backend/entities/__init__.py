@@ -111,7 +111,7 @@ class Digla(Hero):
         self.current_idle_index = 0
         self.walking = False
 
-        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 12)
+        self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 6)
 
     def update(self, dt):
         if self.walking:
@@ -139,6 +139,8 @@ class Digla(Hero):
         screen.blit(texture, (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
         screen.fill((255, 0, 0), (self.interpolation_x, self.interpolation_y, 2, 2))
 
+        super().draw(screen)
+
 
 
 class Vaaslen(Hero):
@@ -156,4 +158,6 @@ class Vaaslen(Hero):
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
 
-        screen.blit(texture, (self.interpolation_x + texture.get_width() / 2, self.interpolation_y + texture.get_height() / 2))
+        screen.blit(texture, (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
+
+        super().draw(screen)

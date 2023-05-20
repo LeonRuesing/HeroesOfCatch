@@ -68,9 +68,24 @@ class MatchmakingController(PacketListener):
             HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('4'.encode())
 
 
+class RoundResultScreenController(PacketListener):
+    def __init__(self):
+        HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
+
+        self.heroes_win = 0
+
+    def on_packet_reveived(self, packet_id: int, data: list[str]):
+        if packet_id == 11:
+            print('received')
+            HandlerGlobals.SCREEN_HANDLER.set_screen(4)
+            self.heroes_win = int(data[1])
+
+
 class IngameScreenController(PacketListener):
     def __init__(self):
         HandlerGlobals.SERVER_CONNECTION.packet_listeners.append(self)
+
+        self.seconds_left = 60
 
     def on_packet_reveived(self, packet_id: int, data: str):
         # print('packet_id', packet_id)
@@ -140,24 +155,35 @@ class IngameScreenController(PacketListener):
                     hero.y = y
         elif packet_id == 7:
             print('packet 7')
-            effective_speed = float(data[1])
-            print(effective_speed)
+            id = int(data[1])
+            effect_name = data[2]
+            effective_speed = float(data[3])
+
             for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
-                if type(i) == Bob:
-                    i.freeze = True
-                    i.interpolation_speed = effective_speed
-                    print('Freezed')
+                if effect_name == 'Freeze':
+                    if i.id == id and type(i) == Bob:
+                        i.freeze = True
+                        i.interpolation_speed = effective_speed
+                        print('Freezed')
+                elif effect_name == 'Shield':
+                    if i.id == id:
+                        i.shield = True
         elif packet_id == 8:
             id = int(data[1])
+            effect = data[2]
             entity = HandlerGlobals.INGAME_ENTITY_HANDLER.get_entity_by_id(id)
             if entity is not None:
                 entity.interpolation_speed = entity.orig_interpolation_speed
 
-                if type(entity) == Bob:
-                    entity.freeze = False
+                if effect == 'Freeze':
+                    if entity.id == id:
+                        entity.freeze = False
+                elif effect == 'Shield':
+                    entity.shield = False
         elif packet_id == 9:
             id = int(data[1])
             entity = HandlerGlobals.INGAME_ENTITY_HANDLER.get_entity_by_id(id)
             if entity is not None:
                 entity.hunted = True
-
+        elif packet_id == 10:
+            self.seconds_left = int(data[1])

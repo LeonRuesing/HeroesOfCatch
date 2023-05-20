@@ -39,7 +39,8 @@ class PacketListener:
                 bottom = int(data[4])
 
                 movement = (left, right, top, bottom)
-                active_round.update_movement_for_user(round_username, movement)
+                if active_round is not None:
+                    active_round.update_movement_for_user(round_username, movement)
             elif packet_id == 3:
                 user = ServerGlobals.get_client_connection_by_socket(socket)
                 MatchmakingHandler.add_player(user)
@@ -49,8 +50,8 @@ class PacketListener:
             elif packet_id == 5:
                 round_username = ServerGlobals.get_client_connection_by_socket(socket).username
                 active_round = ServerGlobals.get_round_by_username(round_username)
-                active_round.request_ability(round_username)
-
+                if active_round is not None:
+                    active_round.request_ability(round_username)
 
 
             print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {packet_id}')

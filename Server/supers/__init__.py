@@ -48,6 +48,9 @@ class PlayerCharacter:
         self.effective_speed = self.speed
         self.current_effect = None
 
+    def set_effect(self, effect: Effect):
+        self.current_effect = effect
+
     def clear_effect(self):
         self.effective_speed = self.speed
         self.current_effect = None

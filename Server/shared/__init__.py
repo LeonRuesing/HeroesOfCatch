@@ -88,9 +88,13 @@ class DataHandler:
         return data.encode()
 
     @staticmethod
-    def get_freeze_hunter(hunter: PlayerCharacter):
-        data = f'{7}'
-        data += ';' + str(hunter.effective_speed)
+    def get_effect_set(character: PlayerCharacter, character_list: list[PlayerCharacter]):
+        id = 0
+        for i in range(len(character_list)):
+            if character_list[i].username == character.username:
+                id = i
+
+        data = f'{7};{id};{character.current_effect.name};{character.effective_speed}'
 
         return data.encode()
 
@@ -102,7 +106,7 @@ class DataHandler:
                 id = i
                 break
 
-        data = f'{8};{id}'
+        data = f'{8};{id};{character.current_effect.name}'
 
         return data.encode()
 
@@ -116,4 +120,14 @@ class DataHandler:
 
         data = f'{9};{id}'
 
+        return data.encode()
+
+    @staticmethod
+    def get_seconds_left(seconds_left):
+        data = f'{10};{seconds_left}'
+        return data.encode()
+
+    @staticmethod
+    def get_round_result(heroes_win: int):
+        data = f'{11};{heroes_win}'
         return data.encode()

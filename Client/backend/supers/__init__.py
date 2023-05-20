@@ -77,10 +77,18 @@ class Character:
 class Hero(Character):
     def __init__(self, id: int, username):
         super().__init__(id, username)
+        self.shield_texture = ProjectGlobals.load_image("effects/hero_shield")
+        self.shield_texture_rect = self.shield_texture.get_rect()
+        self.shield = False
+
+    def draw(self, screen: pygame.Surface):
+        if self.shield:
+            self.shield_texture_rect.centerx = self.interpolation_x
+            self.shield_texture_rect.centery = self.interpolation_y
+            screen.blit(self.shield_texture, self.shield_texture_rect)
 
 
 class Hunter(Character):
-
     FREEZE_IMAGES = []
 
     def __init__(self, id: int, username):

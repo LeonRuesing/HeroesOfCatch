@@ -43,3 +43,4 @@ class ControllerGlobals:
     LOADING_SCREEN_CONTROLLER = backend.controller.LoadingScreenController()
     MATCHMAKING_CONTROLLER = backend.controller.MatchmakingController()
     INGAME_SCREEN_CONTROLLER = backend.controller.IngameScreenController()
+    ROUND_RESULT_SCREEN_CONTROLLER = backend.controller.RoundResultScreenController()

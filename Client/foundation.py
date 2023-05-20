@@ -8,6 +8,7 @@ from frontend.screens.loading import LoadingScreen
 from frontend.screens.lobby import LobbyScreen
 from frontend.screens.ingame import IngameScreen
 from frontend.screens.lobby.matchmaking import MatchmakingScreen
+from frontend.screens.round_result import RoundResultScreen
 
 
 class Game:
@@ -31,6 +32,7 @@ class Game:
         self.lobby = LobbyScreen()
         self.ingame = IngameScreen()
         self.matchmaking = MatchmakingScreen()
+        self.round_result = RoundResultScreen()
 
         self.last_updated = 0
 
@@ -81,6 +83,8 @@ class Game:
             return self.ingame
         elif screen_id == 3:
             return self.matchmaking
+        elif screen_id == 4:
+            return self.round_result
 
     def update(self, dt):
         self.get_current_screen().update(dt)

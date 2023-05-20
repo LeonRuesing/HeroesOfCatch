@@ -2,7 +2,7 @@ import time
 
 import pygame
 
-from backend.shared import ProjectGlobals, HandlerGlobals
+from backend.shared import ProjectGlobals, HandlerGlobals, ControllerGlobals
 
 
 class AbilityUI:
@@ -72,7 +72,7 @@ class AbilityUI:
 class IngameScreen:
     def __init__(self):
         self.background = ProjectGlobals.load_image("ingame_grass_background")
-
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 14)
         self.ability_ui = AbilityUI()
 
     def draw(self, screen, dt):
@@ -90,9 +90,17 @@ class IngameScreen:
                 self.ability_ui.ability = HandlerGlobals.MOVEMENT_HANDLER.get_player().ability
                 self.ability_ui.draw(screen, dt)
 
+        text = str(ControllerGlobals.INGAME_SCREEN_CONTROLLER.seconds_left) + " Sek."
+        basic_surface = self.font.render(text, True, (255, 255, 255))
+
+        text_rect = basic_surface.get_rect()
+        text_rect.right = ProjectGlobals.SCREEN_RECT.right - 10
+        text_rect.top = ProjectGlobals.SCREEN_RECT.top + 10
+
+        screen.blit(basic_surface, text_rect)
+
     def update(self, dt):
         self.ability_ui.update()
 
     def show(self):
         pass
-

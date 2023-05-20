@@ -10,8 +10,12 @@ class ActiveRoundHandler:
     def __init__(self, active_round: ActiveRound):
         self.running = False
         self.active_round = active_round
+        self.round_end = 0
+        self.seconds_left = 0
 
     def start_game(self):
+        self.round_end = time.time_ns() + (60 * 1_000_000_000)
+
         # Prepare round
         self.create_characters()
 
@@ -22,6 +26,7 @@ class ActiveRoundHandler:
         self.start_game_loop()
 
     def create_characters(self):
+        vaaslen = False
         hunter_player = random.randint(0, len(self.active_round.round.users) - 1)
         for i in range(len(self.active_round.round.users)):
             character_type = PlayerCharacter.CharacterType.HERO
@@ -30,9 +35,10 @@ class ActiveRoundHandler:
                 character_type = PlayerCharacter.CharacterType.HUNTER
 
             i = self.active_round.round.users[i]
-            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300), character_type)
-            #player_character.hero_id = random.randint(0, 1)
-            player_character.hero_id = 0
+            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300),
+                                               character_type)
+            # player_character.hero_id = random.randint(0, 1)
+            player_character.hero_id = 1
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)
@@ -41,6 +47,14 @@ class ActiveRoundHandler:
         for i in ServerGlobals.CONNECTION_LINKS:
             if self.active_round.user_present(i.username):
                 DataHandler.send_to_socket(i.socket, data)
+
+    def get_hero_player_amount(self) -> int:
+        heroes = 0
+        for i in self.active_round.player_characters:
+            if i.character_type == PlayerCharacter.CharacterType.HERO:
+                if not i.hunted:
+                    heroes += 1
+        return heroes
 
     def get_online_player_amount(self) -> int:
         players_online = 0
@@ -56,15 +70,21 @@ class ActiveRoundHandler:
     def freeze_hunter(self):
         for i in self.active_round.player_characters:
             if i.character_type == PlayerCharacter.CharacterType.HUNTER:
-                i.current_effect = Effect('Freeze', 4)
+                i.current_effect = Effect('Freeze', 2)
                 i.effective_speed = 1.5
-                i.end_of_effect = time.time_ns() + (4 * 1_000_000_000) # 4Sec.
-                self.transfer_data_to_players(DataHandler.get_freeze_hunter(i))
+                self.transfer_data_to_players(DataHandler.get_effect_set(i, self.active_round.player_characters))
 
     def unfreeze_hunter(self):
         for i in self.active_round.player_characters:
             if i.character_type == PlayerCharacter.CharacterType.HUNTER:
                 i.effective_speed = i.speed
+
+    def shield_heroes(self):
+        for i in self.active_round.player_characters:
+            if i.character_type == PlayerCharacter.CharacterType.HERO:
+                if not i.hunted:
+                    i.current_effect = Effect('Shield', 2.5)
+                    self.transfer_data_to_players(DataHandler.get_effect_set(i, self.active_round.player_characters))
 
     def hunt_hero(self, character: PlayerCharacter):
         character.hunted = True
@@ -72,8 +92,8 @@ class ActiveRoundHandler:
         print(f'Hunted {character.username}')
 
     def clear_effect(self, character: PlayerCharacter):
-        character.clear_effect()
         self.transfer_data_to_players(DataHandler.get_effect_clear(character, self.active_round.player_characters))
+        character.clear_effect()
 
     def update(self, delta):
         for i in self.active_round.player_characters:
@@ -83,23 +103,34 @@ class ActiveRoundHandler:
 
             if i.ability_requested:
                 if i.character_type == PlayerCharacter.CharacterType.HERO:
+                    # Digla
                     if i.hero_id == 0:
                         self.freeze_hunter()
                         i.ability_requested = False
+                    # Vaaslen
+                    elif i.hero_id == 1:
+                        self.shield_heroes()
+                        i.ability_requested = False
+
+                # Hunter
                 if i.character_type == PlayerCharacter.CharacterType.HUNTER:
                     hunt_range = 50
                     for y in self.active_round.player_characters:
                         if y.character_type == PlayerCharacter.CharacterType.HERO and not y.hunted:
                             if i != y:
                                 if abs(i.x - y.x) <= hunt_range and abs(i.y - y.y) <= hunt_range:
-                                    self.hunt_hero(y)
+                                    shielded = False
+                                    if y.current_effect is not None:
+                                        shielded = y.current_effect.name == 'Shield'
+
+                                    if not shielded:
+                                        self.hunt_hero(y)
                     i.ability_requested = False
 
             if i.current_effect is not None:
                 if i.current_effect.effect_done():
                     self.clear_effect(i)
                     print('Effect cleared')
-
 
             speed = i.effective_speed
 
@@ -123,20 +154,55 @@ class ActiveRoundHandler:
             elif i.y > 540:
                 i.y = 0
 
+    def close_round(self, result):
+        self.running = False
+        time.sleep(2)
+        if result != -1:
+            self.transfer_data_to_players(DataHandler.get_round_result(result))
+        self.active_round.round.users.clear()
+
+    def hero_win(self):
+        self.close_round(1)
+        pass
+
+    def hunter_win(self):
+        self.close_round(0)
+        pass
+
     def game_loop(self):
         delta = 0
         last_update = 0
         while self.running:
+            seconds_left = round((self.round_end - time.time_ns()) / 1_000_000_000)
+
+            # Send time update
+            if seconds_left != self.seconds_left:
+                self.seconds_left = seconds_left
+                self.transfer_data_to_players(DataHandler.get_seconds_left(self.seconds_left))
+
+            # Check time
+            if seconds_left <= 0:
+                if self.get_hero_player_amount() == 0:
+                    self.hunter_win()
+                else:
+                    self.hero_win()
+                return
+
+            # Check if all heroes got hunted
+            if self.get_hero_player_amount() == 0:
+                self.hunter_win()
+                return
+
             # Check if players are still there
             if self.get_online_player_amount() == 0:
-                self.running = False
+                self.close_round(-1)
                 print('[INFO] Eine Runde wurde abgebrochen.')
                 return
 
-            time.sleep(1/60)
+            time.sleep(1 / 60)
 
             last_update_length = time.time() - last_update
-            delta = last_update_length / (1/60)
+            delta = last_update_length / (1 / 60)
             self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))
 
