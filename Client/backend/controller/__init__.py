@@ -60,7 +60,7 @@ class MatchmakingController(PacketListener):
     @staticmethod
     def send_matchmaking_request():
         if HandlerGlobals.SERVER_CONNECTION.connected:
-            HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('3'.encode())
+            HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(f'3;{HandlerGlobals.HERO_HANDLER.selected_hero}'.encode())
 
     @staticmethod
     def send_queue_cancel():
@@ -112,12 +112,10 @@ class IngameScreenController(PacketListener):
                     hero_id = int(data[index])
                     index += 1
 
-                    hero = backend.supers.Hero(id, username)
+                    hero = HeroHandler.build_hero(hero_id, id, username)
                     hero.x = x
                     hero.y = y
                     hero.sync_pos_with_server()
-                    # hero.__class__ = type(HandlerGlobals.HERO_HANDLER.entities[hero_id])
-
 
                     HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
 

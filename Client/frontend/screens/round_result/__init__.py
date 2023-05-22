@@ -6,7 +6,7 @@ from frontend.supers import TextButton
 
 def send_matchmaking_request():
     if HandlerGlobals.SERVER_CONNECTION.connected:
-        HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('3'.encode())
+        HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(f'3;{HandlerGlobals.HERO_HANDLER.selected_hero}'.encode())
 
 
 class RoundResultScreen:

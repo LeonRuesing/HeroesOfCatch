@@ -18,6 +18,7 @@ class UserConnectionLink:
     def __init__(self, socket: socket.socket, username: str):
         self.socket = socket
         self.username = username
+        self.selected_hero_id = 0
 
 
 class Effect:

@@ -37,8 +37,7 @@ class ActiveRoundHandler:
             i = self.active_round.round.users[i]
             player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300),
                                                character_type)
-            # player_character.hero_id = random.randint(0, 1)
-            player_character.hero_id = 1
+            player_character.hero_id = i.selected_hero_id
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)

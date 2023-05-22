@@ -96,6 +96,7 @@ class Game:
         switched = backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen() != self.last_updated
         if switched:
             self.get_current_screen().show()
+            print('show')
             self.last_updated = backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen()
 
         pass

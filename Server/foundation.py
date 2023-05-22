@@ -42,7 +42,11 @@ class PacketListener:
                 if active_round is not None:
                     active_round.update_movement_for_user(round_username, movement)
             elif packet_id == 3:
+                selected_hero_id = int(data[1])
+
                 user = ServerGlobals.get_client_connection_by_socket(socket)
+                user.selected_hero_id = selected_hero_id
+
                 MatchmakingHandler.add_player(user)
             elif packet_id == 4:
                 user = ServerGlobals.get_client_connection_by_socket(socket)
