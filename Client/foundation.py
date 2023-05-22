@@ -3,7 +3,7 @@ import os
 import pygame
 
 import backend
-from backend.shared import ProjectGlobals
+from backend.shared import ProjectGlobals, HandlerGlobals
 from frontend.screens.loading import LoadingScreen
 from frontend.screens.lobby import LobbyScreen
 from frontend.screens.ingame import IngameScreen
@@ -113,5 +113,8 @@ class Game:
         text_rect.bottom = backend.shared.ProjectGlobals.SCREEN_RECT.bottom - 5
 
         #self.screen.blit(basic_surface, text_rect)
+
+        if not HandlerGlobals.SERVER_CONNECTION.connected and HandlerGlobals.SCREEN_HANDLER.get_screen() != 0:
+            HandlerGlobals.SCREEN_HANDLER.set_screen(0)
 
         pygame.display.flip()

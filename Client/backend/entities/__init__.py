@@ -152,7 +152,7 @@ class Vaaslen(Hero):
 
     def __init__(self, id: int, username):
         super().__init__(id, username)
-        self.idle_texture = ProjectGlobals.load_image("/heroes/vaaslen/idle")
+        self.idle_texture = ProjectGlobals.load_image("/heroes/vaaslen/idle/idle")
 
         if len(Vaaslen.WALKING_SPRITES) == 0:
             for i in range(50):
@@ -171,10 +171,6 @@ class Vaaslen(Hero):
             self.current_walking_index += 1
             if self.current_walking_index >= len(Vaaslen.WALKING_SPRITES):
                 self.current_walking_index = 0
-        #else:
-            #self.current_idle_index += 1
-            #if self.current_idle_index >= len(Digla.IDLE_SPRITES):
-              #  self.current_idle_index = 0
 
         self.walking = self.interpolation_x != self.x or self.interpolation_y != self.y
         super().update(dt)
@@ -183,8 +179,7 @@ class Vaaslen(Hero):
         if self.walking:
             texture = Vaaslen.WALKING_SPRITES[self.current_walking_index]
         else:
-            #texture = Digla.IDLE_SPRITES[self.current_idle_index]
-            texture = Vaaslen.WALKING_SPRITES[self.current_walking_index]
+            texture = self.idle_texture
 
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
