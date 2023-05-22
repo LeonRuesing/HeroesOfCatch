@@ -78,7 +78,7 @@ class IngameScreen:
     def draw(self, screen, dt):
         screen.blit(self.background, (0, 0))
 
-        for i in HandlerGlobals.INGAME_ENTITY_HANDLER.entities:
+        for i in HandlerGlobals.IN_GAME_ENTITY_HANDLER.entities:
             # screen.blit(self.entities[i.hero_id], (i.x, i.y))
             if not i.hunted:
                 i.draw(screen)
@@ -90,7 +90,7 @@ class IngameScreen:
                 self.ability_ui.ability = HandlerGlobals.MOVEMENT_HANDLER.get_player().ability
                 self.ability_ui.draw(screen, dt)
 
-        text = str(ControllerGlobals.INGAME_SCREEN_CONTROLLER.seconds_left) + " Sek."
+        text = str(ControllerGlobals.IN_GAME_SCREEN_CONTROLLER.seconds_left) + " Sek."
         basic_surface = self.font.render(text, True, (255, 255, 255))
 
         text_rect = basic_surface.get_rect()

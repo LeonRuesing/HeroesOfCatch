@@ -61,6 +61,7 @@ class Round:
     def __init__(self):
         self.users: list[UserConnectionLink] = []
 
+
 class ActiveRound:
     def __init__(self, round: Round):
         self.round = round
@@ -71,7 +72,6 @@ class ActiveRound:
         for i in self.player_characters:
             if i.username == username:
                 i.ability_requested = True
-                print(f'{i.username} requested Ability')
 
     def user_present(self, username):
         for i in self.round.users:

@@ -104,10 +104,8 @@ class MovementHandler:
 
         self.send_update()
 
-    # TODO: Game crash after disconnect
     def send_update(self):
         if backend.shared.HandlerGlobals.SERVER_CONNECTION.connected:
-            print(f'{self.movement[0]}')
             backend.shared.HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(
                 f'2;{self.movement[0]};{self.movement[1]};{self.movement[2]};{self.movement[3]}'.encode())
 

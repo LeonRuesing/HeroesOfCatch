@@ -1,8 +1,6 @@
 import threading
-import time
 
 from general import MatchmakingHandler
-from ingame import ActiveRoundHandler
 from shared import *
 
 
@@ -10,13 +8,13 @@ class PacketListener:
 
     @staticmethod
     def listen_for_packets(socket: socket.socket):
+
         while True:
             raw = str(socket.recv(1024).decode())
             data = raw.split(";")
-            print('RAW: ' + raw)
             packet_id = int(data[0])
 
-            # Login
+            # Login request
             if packet_id == 1:
                 time.sleep(1)  # Cooldown
                 print(raw)
@@ -29,6 +27,7 @@ class PacketListener:
 
                 ServerGlobals.CONNECTION_LINKS.append(user)
 
+            # Movement update
             elif packet_id == 2:
                 round_username = ServerGlobals.get_client_connection_by_socket(socket).username
                 active_round = ServerGlobals.get_round_by_username(round_username)
@@ -41,6 +40,8 @@ class PacketListener:
                 movement = (left, right, top, bottom)
                 if active_round is not None:
                     active_round.update_movement_for_user(round_username, movement)
+
+            # Matchmaking add
             elif packet_id == 3:
                 selected_hero_id = int(data[1])
 
@@ -48,17 +49,18 @@ class PacketListener:
                 user.selected_hero_id = selected_hero_id
 
                 MatchmakingHandler.add_player(user)
+
+            # Matchmaking remove
             elif packet_id == 4:
                 user = ServerGlobals.get_client_connection_by_socket(socket)
                 MatchmakingHandler.remove_player(user)
+
+            # Ability request
             elif packet_id == 5:
                 round_username = ServerGlobals.get_client_connection_by_socket(socket).username
                 active_round = ServerGlobals.get_round_by_username(round_username)
                 if active_round is not None:
                     active_round.request_ability(round_username)
-
-
-            print(f'[ClientConnection] Der Client {socket.getpeername()} sendete Paket {packet_id}')
 
 
 class ConnectionHandler(DisconnectListener):
@@ -75,7 +77,7 @@ class ConnectionHandler(DisconnectListener):
         ServerGlobals.CONNECTION_LINKS.remove(user)
         ServerGlobals.CONNECTIONS.remove(client_connection)
 
-    def wait_for_incomming_connections(self):
+    def wait_for_incoming_connections(self):
         self.server_socket.listen()
 
         while True:
@@ -125,4 +127,4 @@ if __name__ == '__main__':
     server_foundation.start()
 
     connection_handler = ConnectionHandler(server_foundation.server_socket)
-    connection_handler.wait_for_incomming_connections()
+    connection_handler.wait_for_incoming_connections()

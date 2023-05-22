@@ -1,6 +1,5 @@
 import random
 import threading
-import time
 
 from shared import DataHandler, ServerGlobals
 from supers import *
@@ -10,11 +9,16 @@ class ActiveRoundHandler:
     def __init__(self, active_round: ActiveRound):
         self.running = False
         self.active_round = active_round
+
+        self.seconds = 60
         self.round_end = 0
         self.seconds_left = 0
 
+        self.ups = 60
+        self.ns = 1_000_000_000
+
     def start_game(self):
-        self.round_end = time.time_ns() + (60 * 1_000_000_000)
+        self.round_end = time.time_ns() + (self.seconds * self.ns)
 
         # Prepare round
         self.create_characters()
@@ -26,7 +30,6 @@ class ActiveRoundHandler:
         self.start_game_loop()
 
     def create_characters(self):
-        vaaslen = False
         hunter_player = random.randint(0, len(self.active_round.round.users) - 1)
         for i in range(len(self.active_round.round.users)):
             character_type = PlayerCharacter.CharacterType.HERO
@@ -38,8 +41,9 @@ class ActiveRoundHandler:
             player_character = PlayerCharacter(i.username, random.randint(50, 900), random.randint(50, 500),
                                                character_type)
             player_character.hero_id = i.selected_hero_id
-            print(
-                f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
+
+            print(f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
+
             self.active_round.player_characters.append(player_character)
 
     def transfer_data_to_players(self, data):
@@ -130,7 +134,6 @@ class ActiveRoundHandler:
             if i.current_effect is not None:
                 if i.current_effect.effect_done():
                     self.clear_effect(i)
-                    print('Effect cleared')
 
             speed = i.effective_speed
 
@@ -163,17 +166,14 @@ class ActiveRoundHandler:
 
     def hero_win(self):
         self.close_round(1)
-        pass
 
     def hunter_win(self):
         self.close_round(0)
-        pass
 
     def game_loop(self):
-        delta = 0
         last_update = 0
         while self.running:
-            seconds_left = round((self.round_end - time.time_ns()) / 1_000_000_000)
+            seconds_left = round((self.round_end - time.time_ns()) / self.ns)
 
             # Send time update
             if seconds_left != self.seconds_left:
@@ -199,10 +199,11 @@ class ActiveRoundHandler:
                 print('[INFO] Eine Runde wurde abgebrochen.')
                 return
 
-            time.sleep(1 / 60)
+            time.sleep(1 / self.ups)
 
             last_update_length = time.time() - last_update
-            delta = last_update_length / (1 / 60)
+            delta = last_update_length / (1 / self.ups)
+
             self.update(delta)
             self.transfer_data_to_players(DataHandler.get_character_pos_update(self.active_round.player_characters))
 

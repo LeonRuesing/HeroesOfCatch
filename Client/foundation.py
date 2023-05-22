@@ -14,16 +14,14 @@ from frontend.screens.round_result import RoundResultScreen
 
 class Game:
     def __init__(self):
-        # self.shared = foundation.Globals()
+        ProjectGlobals.SCREEN_RECT.size = (960, 540)
 
-        backend.shared.ProjectGlobals.SCREEN_RECT.size = (960, 540)
-
-        os.environ['SDL_VIDEO_CENTERED'] = '1'  # Fensterkoordinaten
-        pygame.init()  # Subsysteme starten
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        pygame.init()
 
         pygame.display.set_caption("HeroesOfCatch")
         self.screen = pygame.display.set_mode(backend.shared.ProjectGlobals.SCREEN_RECT.size)  # ,
-        self.clock = pygame.time.Clock()  # Taktgeber
+        self.clock = pygame.time.Clock()
 
         backend.shared.ProjectGlobals.SCREEN_RECT.size = (self.screen.get_width(), self.screen.get_height())
 
@@ -42,8 +40,8 @@ class Game:
 
     def run(self):
         try:
-            while ProjectGlobals.RUNNING:  # Hauptprogrammschleife
-                delta = self.clock.tick(ProjectGlobals.FPS) / (1000 / ProjectGlobals.FPS)  # Auf mind. 1/60s takten
+            while ProjectGlobals.RUNNING:
+                delta = self.clock.tick(ProjectGlobals.FPS) / (1000 / ProjectGlobals.FPS)
 
                 self.watch_for_events()
                 self.update(delta)
@@ -51,28 +49,25 @@ class Game:
         except KeyboardInterrupt:
             pygame.quit()
 
-        backend.shared.HandlerGlobals.SERVER_CONNECTION.stop() # Serververbindung abbrechen
-        pygame.quit()  # Subssysteme stoppen
+        backend.shared.HandlerGlobals.SERVER_CONNECTION.stop()
+        pygame.quit()
 
     def watch_for_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 ProjectGlobals.RUNNING = False
             elif event.type == pygame.MOUSEMOTION:
-                # self.button_handler.update_button_hover(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-                backend.shared.HandlerGlobals.BUTTON_HANDLER.update_hover(pygame.mouse.get_pos())
-                pass
+                HandlerGlobals.BUTTON_HANDLER.update_hover(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONUP:
-                if backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen() == 0:
+                if HandlerGlobals.SCREEN_HANDLER.get_screen() == 0 and not HandlerGlobals.SERVER_CONNECTION.connected:
                     self.connecting.set_to_default()
-                backend.shared.HandlerGlobals.BUTTON_HANDLER.update_press()
-                pass
+                HandlerGlobals.BUTTON_HANDLER.update_press()
             elif event.type == pygame.KEYUP:
-                if backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen() == 2:
-                    backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
+                if HandlerGlobals.SCREEN_HANDLER.get_screen() == 2:
+                    HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 0)
             elif event.type == pygame.KEYDOWN:
-                if backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen() == 2:
-                    backend.shared.HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 1)
+                if HandlerGlobals.SCREEN_HANDLER.get_screen() == 2:
+                    HandlerGlobals.MOVEMENT_HANDLER.check_keyboard_input(event, 1)
 
     def get_current_screen(self) -> object:
         screen_id = backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen()
@@ -93,13 +88,13 @@ class Game:
     def update(self, dt):
         self.get_current_screen().update(dt)
 
-        switched = backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen() != self.last_updated
+        switched = HandlerGlobals.SCREEN_HANDLER.get_screen() != self.last_updated
         if switched:
             self.get_current_screen().show()
-            print('show')
-            self.last_updated = backend.shared.HandlerGlobals.SCREEN_HANDLER.get_screen()
+            self.last_updated = HandlerGlobals.SCREEN_HANDLER.get_screen()
 
-        pass
+        if not HandlerGlobals.SERVER_CONNECTION.connected and HandlerGlobals.SCREEN_HANDLER.get_screen() != 0:
+            HandlerGlobals.SCREEN_HANDLER.set_screen(0)
 
     def draw(self, dt):
         self.get_current_screen().draw(self.screen, dt)
@@ -112,9 +107,6 @@ class Game:
         text_rect.centerx = backend.shared.ProjectGlobals.SCREEN_RECT.centerx
         text_rect.bottom = backend.shared.ProjectGlobals.SCREEN_RECT.bottom - 5
 
-        #self.screen.blit(basic_surface, text_rect)
-
-        if not HandlerGlobals.SERVER_CONNECTION.connected and HandlerGlobals.SCREEN_HANDLER.get_screen() != 0:
-            HandlerGlobals.SCREEN_HANDLER.set_screen(0)
+        self.screen.blit(basic_surface, text_rect)
 
         pygame.display.flip()

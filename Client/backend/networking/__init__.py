@@ -34,7 +34,7 @@ class ServerConnection:
 
     def trigger_packet_listener(self, packet_id: int, data: list[str]):
         for i in self.packet_listeners:
-            i.on_packet_reveived(packet_id=packet_id, data=data)
+            i.on_packet_received(packet_id=packet_id, data=data)
 
     def listen(self):
         while True:
@@ -44,7 +44,6 @@ class ServerConnection:
                 packet_id = int(data[0])
 
                 self.trigger_packet_listener(packet_id, data)
-                #print("[Networking] Packet erhalten mit ID", packet_id)
 
             except Exception as msg:
                 # Set to loading screen
@@ -54,7 +53,7 @@ class ServerConnection:
                 self.error = True
                 self.stop()
                 break
-        print('End of method')
+
         backend.shared.HandlerGlobals.SCREEN_HANDLER.current_screen = 0
         self.state = "Problem bei der Datenübertragung!"
         self.error = True

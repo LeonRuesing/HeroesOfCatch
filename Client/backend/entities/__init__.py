@@ -17,22 +17,22 @@ class Bob(Hunter):
         self.interpolation_speed = 5.2
 
         for i in range(37):
-            texture = ProjectGlobals.load_image(f"/hunter/walking/walking_{i}")
+            texture = ProjectGlobals.load_image(f"/hunter/bob/walking/walking_{i}")
             texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
             Bob.WALKING_SPRITES.append(texture)
 
         for i in range(37):
-            texture = ProjectGlobals.load_image(f"/hunter/idle/idle_{i}")
+            texture = ProjectGlobals.load_image(f"/hunter/bob/idle/idle_{i}")
             texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
             Bob.IDLE_SPRITES.append(texture)
 
         for i in range(37):
-            texture = ProjectGlobals.load_image(f"/hunter/walking_freeze/walking_{i}")
+            texture = ProjectGlobals.load_image(f"/hunter/bob/walking_freeze/walking_{i}")
             texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
             Bob.FREEZE_WALKING_SPRITES.append(texture)
 
         for i in range(37):
-            texture = ProjectGlobals.load_image(f"/hunter/idle_freeze/idle_{i}")
+            texture = ProjectGlobals.load_image(f"/hunter/bob/idle_freeze/idle_{i}")
             texture = pygame.transform.scale(texture, (texture.get_width() * 3, texture.get_height() * 3))
             Bob.FREEZE_IDLE_SPRITES.append(texture)
 
@@ -40,7 +40,7 @@ class Bob(Hunter):
         self.current_idle_index = 0
         self.walking = False
 
-        self.ability = Ability(ProjectGlobals.load_image("/hunter/ability/kill"), 2)
+        self.ability = Ability(ProjectGlobals.load_image("/hunter/bob/ability/kill"), 2)
 
     def update(self, dt):
         if self.walking:
@@ -78,7 +78,7 @@ class Bob(Hunter):
         super().draw(screen)
 
 
-# Hero Rageo was removed from game
+# Hero Rageo has been removed from game
 class Rageo(Hero):
     def __init__(self, id: int, username):
         super().__init__(id, username)
