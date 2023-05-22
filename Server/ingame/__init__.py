@@ -35,10 +35,15 @@ class ActiveRoundHandler:
                 character_type = PlayerCharacter.CharacterType.HUNTER
 
             i = self.active_round.round.users[i]
-            player_character = PlayerCharacter(i.username, random.randint(0, 300), random.randint(0, 300),
+            player_character = PlayerCharacter(i.username, random.randint(50, 900), random.randint(50, 500),
                                                character_type)
             # player_character.hero_id = random.randint(0, 1)
-            player_character.hero_id = 1
+            #player_character.hero_id = 1
+            if not vaaslen:
+                player_character.hero_id = 1
+                vaaslen = True
+            else:
+                player_character.hero_id = 0
             print(
                 f'Character \'{player_character.username}\' erstellt bei x={player_character.x} y={player_character.y} cha={player_character.character_type} hero={player_character.hero_id}')
             self.active_round.player_characters.append(player_character)
@@ -125,6 +130,7 @@ class ActiveRoundHandler:
 
                                     if not shielded:
                                         self.hunt_hero(y)
+                                        break
                     i.ability_requested = False
 
             if i.current_effect is not None:

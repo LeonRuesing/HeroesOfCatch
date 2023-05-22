@@ -77,6 +77,7 @@ class Bob(Hunter):
 
         super().draw(screen)
 
+
 # Hero Rageo was removed from game
 class Rageo(Hero):
     def __init__(self, id: int, username):
@@ -90,11 +91,11 @@ class Rageo(Hero):
         texture = self.idle_texture
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
-        screen.blit(texture, (self.interpolation_x + texture.get_width() / 2, self.interpolation_y + texture.get_height() / 2))
+        screen.blit(texture,
+                    (self.interpolation_x + texture.get_width() / 2, self.interpolation_y + texture.get_height() / 2))
 
 
 class Digla(Hero):
-
     IDLE_SPRITES = []
     WALKING_SPRITES = []
 
@@ -136,28 +137,54 @@ class Digla(Hero):
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
 
-        screen.blit(texture, (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
+        screen.blit(texture,
+                    (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
         screen.fill((255, 0, 0), (self.interpolation_x, self.interpolation_y, 2, 2))
 
         super().draw(screen)
 
 
-
 class Vaaslen(Hero):
+    WALKING_SPRITES = []
+
     def __init__(self, id: int, username):
         super().__init__(id, username)
         self.idle_texture = ProjectGlobals.load_image("/heroes/vaaslen/idle")
 
+        if len(Vaaslen.WALKING_SPRITES) == 0:
+            for i in range(50):
+                Vaaslen.WALKING_SPRITES.append(ProjectGlobals.load_image(f"/heroes/vaaslen/walking/walking_{i}"))
+
         self.ability = Ability(ProjectGlobals.load_image(f"/heroes/vaaslen/ability/shield"), 15)
 
+        self.current_walking_index = 0
+        self.current_idle_index = 0
+        self.walking = False
+
     def update(self, dt):
+        if self.walking:
+            self.current_walking_index += 1
+            if self.current_walking_index >= len(Vaaslen.WALKING_SPRITES):
+                self.current_walking_index = 0
+        #else:
+            #self.current_idle_index += 1
+            #if self.current_idle_index >= len(Digla.IDLE_SPRITES):
+              #  self.current_idle_index = 0
+
+        self.walking = self.interpolation_x != self.x or self.interpolation_y != self.y
         super().update(dt)
 
     def draw(self, screen: pygame.Surface):
-        texture = self.idle_texture
+        if self.walking:
+            texture = Vaaslen.WALKING_SPRITES[self.current_walking_index]
+        else:
+            #texture = Digla.IDLE_SPRITES[self.current_idle_index]
+            texture = Vaaslen.WALKING_SPRITES[self.current_walking_index]
+
         if self.direction == 1:
             texture = pygame.transform.flip(texture, True, False)
 
-        screen.blit(texture, (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
+        screen.blit(texture,
+                    (self.interpolation_x - texture.get_width() / 2, self.interpolation_y - texture.get_height() / 2))
 
         super().draw(screen)
