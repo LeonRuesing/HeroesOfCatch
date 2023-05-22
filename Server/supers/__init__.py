@@ -18,6 +18,7 @@ class UserConnectionLink:
     def __init__(self, socket: socket.socket, username: str):
         self.socket = socket
         self.username = username
+        self.selected_hero_id = 0
 
 
 class Effect:
@@ -59,7 +60,6 @@ class PlayerCharacter:
 class Round:
     def __init__(self):
         self.users: list[UserConnectionLink] = []
-
 
 class ActiveRound:
     def __init__(self, round: Round):

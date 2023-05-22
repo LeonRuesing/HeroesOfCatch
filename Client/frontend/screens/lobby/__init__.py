@@ -13,7 +13,7 @@ from backend.shared import HandlerGlobals
 
 def send_matchmaking_request():
     if HandlerGlobals.SERVER_CONNECTION.connected:
-        HandlerGlobals.SERVER_CONNECTION.client_socket.sendall('3'.encode())
+        HandlerGlobals.SERVER_CONNECTION.client_socket.sendall(f'3;{HandlerGlobals.HERO_HANDLER.selected_hero}'.encode())
 
 
 class LobbyScreen:
@@ -51,6 +51,10 @@ class LobbyScreen:
         if self.play_button.pressed:
             send_matchmaking_request()
             self.play_button.pressed = False
+
+        if self.change_hero_button.pressed:
+            HandlerGlobals.SCREEN_HANDLER.set_screen(5)
+            self.change_hero_button.pressed = False
 
         if self.close_button.pressed:
             ProjectGlobals.RUNNING = False
