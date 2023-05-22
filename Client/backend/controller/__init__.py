@@ -117,10 +117,7 @@ class IngameScreenController(PacketListener):
                     hero.y = y
                     hero.sync_pos_with_server()
                     # hero.__class__ = type(HandlerGlobals.HERO_HANDLER.entities[hero_id])
-                    if hero_id == 0:
-                        hero = Digla(id, username)
-                    elif hero_id == 1:
-                        hero = Vaaslen(id, username)
+
 
                     HandlerGlobals.INGAME_ENTITY_HANDLER.entities.append(hero)
 

@@ -7,6 +7,7 @@ from backend.shared import ProjectGlobals
 from frontend.screens.loading import LoadingScreen
 from frontend.screens.lobby import LobbyScreen
 from frontend.screens.ingame import IngameScreen
+from frontend.screens.lobby.hero_select import HeroSelectScreen
 from frontend.screens.lobby.matchmaking import MatchmakingScreen
 from frontend.screens.round_result import RoundResultScreen
 
@@ -33,6 +34,7 @@ class Game:
         self.ingame = IngameScreen()
         self.matchmaking = MatchmakingScreen()
         self.round_result = RoundResultScreen()
+        self.hero_select = HeroSelectScreen()
 
         self.last_updated = 0
 
@@ -85,6 +87,8 @@ class Game:
             return self.matchmaking
         elif screen_id == 4:
             return self.round_result
+        elif screen_id == 5:
+            return self.hero_select
 
     def update(self, dt):
         self.get_current_screen().update(dt)

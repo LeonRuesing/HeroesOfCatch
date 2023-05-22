@@ -60,7 +60,6 @@ class Round:
     def __init__(self):
         self.users: list[UserConnectionLink] = []
 
-
 class ActiveRound:
     def __init__(self, round: Round):
         self.round = round

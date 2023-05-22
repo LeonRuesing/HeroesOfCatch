@@ -113,6 +113,9 @@ class Digla(Hero):
 
         self.ability = Ability(ProjectGlobals.load_image(f"/heroes/digla/ability/ice"), 6)
 
+        self.description = f'Digla kann den Hunter alle {self.ability.time} Sekunden für kurze Zeit einfrieren und damit ausbremsen.'
+
+
     def update(self, dt):
         if self.walking:
             self.current_walking_index += 1
@@ -149,6 +152,8 @@ class Vaaslen(Hero):
         self.idle_texture = ProjectGlobals.load_image("/heroes/vaaslen/idle")
 
         self.ability = Ability(ProjectGlobals.load_image(f"/heroes/vaaslen/ability/shield"), 15)
+
+        self.description = f'Kann jedem Helden in der Runde ein kurzfristiges Schild verleihen. Ein wahrer Teamplayer!'
 
     def update(self, dt):
         super().update(dt)

@@ -52,6 +52,10 @@ class LobbyScreen:
             send_matchmaking_request()
             self.play_button.pressed = False
 
+        if self.change_hero_button.pressed:
+            HandlerGlobals.SCREEN_HANDLER.set_screen(5)
+            self.change_hero_button.pressed = False
+
         if self.close_button.pressed:
             ProjectGlobals.RUNNING = False
             self.close_button.pressed = False

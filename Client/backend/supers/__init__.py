@@ -80,6 +80,7 @@ class Hero(Character):
         self.shield_texture = ProjectGlobals.load_image("effects/hero_shield")
         self.shield_texture_rect = self.shield_texture.get_rect()
         self.shield = False
+        self.description = None
 
     def draw(self, screen: pygame.Surface):
         if self.shield:

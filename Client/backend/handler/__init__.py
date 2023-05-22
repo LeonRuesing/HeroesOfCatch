@@ -55,7 +55,17 @@ class IngameEntityHandler:
 
 class HeroHandler:
     def __init__(self):
-        self.heroes = {"0": Digla, "1": Vaaslen}
+        self.heroes = {0: Digla, 1: Vaaslen}
+        self.selected_hero = 0
+
+    @staticmethod
+    def build_hero(hero_id, id, username):
+        hero = None
+        if hero_id == 0:
+            hero = Digla(id, username)
+        elif hero_id == 1:
+            hero = Vaaslen(id, username)
+        return hero
 
 
 class MovementHandler:
